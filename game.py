@@ -1,7 +1,7 @@
 from Board import *
 from Player import *
 from color import *
-
+from gui import *
 
 class Game:
     Turn = ['red', 'blue', 'green', 'yellow']
@@ -11,6 +11,7 @@ class Game:
     def __init__(self, number_of_players):
         self.number_of_players = number_of_players
         self.myBoard = Board()
+        self.gui = Gui(self.myBoard)
         for i in range(self.number_of_players):
             self.players.append(self.myBoard.add_player(i+1))
         self.Turn = self.referesh_turn()
