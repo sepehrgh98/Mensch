@@ -13,9 +13,6 @@ class Game:
         self.myBoard = Board()
         self.gui = Gui(self.myBoard, self)
 
-        self.Turn = self.referesh_turn()
-        self.Start()
-
     def piece_position_destination(self, myplayer, d):
         piece_pos_des = {}
         for i in myplayer.player_pieces:
@@ -35,6 +32,7 @@ class Game:
         return piece_pos_des
 
     def Start(self):
+        self.Turn = self.referesh_turn()
         T_index = 0
         dice_number = 0
         while True:
