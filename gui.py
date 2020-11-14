@@ -1,16 +1,19 @@
-from gui_functions import *
 from tkinter import *
-from game import*
+from Player import *
+
 
 class Gui:
+    enable_colors = ['red', 'blue', 'green', 'yellow']
 
-    def __init__(self, Bord):
+    def __init__(self, Bord, Game_obj):
+        self.Game = Game_obj
         self.Bord = Bord
         self.root = Tk()
         self.root.title("Mench")
         self.root.geometry('900x650')
         self.make_items()
         self.root.mainloop()
+
     def make_items(self):
         # MENU BAR
         menubar = Menu(self.root)
@@ -27,18 +30,63 @@ class Gui:
 
         # DEFINE FRAMES
         player_frame = LabelFrame(self.root)
-        player_frame.grid(row=1, column=0, sticky=W, ipadx=70, ipady=130, padx=(10, 3), pady=(5, 3))
+        player_frame.grid(row=1, column=0, sticky=W, ipadx=24, ipady=28, padx=(10, 3), pady=(5, 3))
         dice_frame = LabelFrame(self.root)
         dice_frame.grid(row=2, column=0, sticky=W, ipadx=75, ipady=130, padx=(10, 3), pady=(3, 3))
         game_frame = LabelFrame(self.root)
         game_frame.grid(row=1, column=1, rowspan=2, pady=(5, 0))
         # PLAYER_FRAME
-        player_lab = Label(player_frame, text="Player").pack()
+        player_lab = Label(player_frame, text="Players", font=("Times", "20", "bold italic")).grid(row=0, column=0,
+                                                                                                   padx=(40, 0),
+                                                                                                   pady=(10, 3))
+
+        global label_text_1_value, label_text_2_value, label_text_3_value, label_text_4_value, label_text_1_color, label_text_2_color, label_text_3_color, label_text_4_color
+        label_text_1_value = StringVar()
+        label_text_1_color = StringVar()
+        label_text_1_value.set("")
+        label_text_1_color.set('black')
+        player_1 = Label(player_frame, textvariable=label_text_1_value, font=("Times", "15", "bold italic"),
+                         fg=label_text_1_color.get()).grid(row=1,
+                                                     column=0,
+                                                     padx=(
+                                                         40, 0),
+                                                     pady=(
+                                                         30, 3))
+        label_text_2_value = StringVar()
+        label_text_2_color = StringVar()
+        label_text_2_value.set("")
+        label_text_2_color.set('black')
+        player_2 = Label(player_frame, textvariable=label_text_2_value, font=("Times", "15", "bold italic"),
+                         fg=label_text_2_color.get()).grid(row=2,
+                                                     column=0,
+                                                     padx=(
+                                                         40, 0),
+                                                     pady=(5, 3))
+        label_text_3_value = StringVar()
+        label_text_3_color = StringVar()
+        label_text_3_value.set("")
+        label_text_3_color.set('black')
+        player_3 = Label(player_frame, textvariable=label_text_3_value, font=("Times", "15", "bold italic"),
+                         fg=label_text_3_color.get()).grid(row=3,
+                                                     column=0,
+                                                     padx=(
+                                                         40, 0),
+                                                     pady=(5, 3))
+        label_text_4_value = StringVar()
+        label_text_4_color = StringVar()
+        label_text_4_value.set("")
+        label_text_4_color.set('black')
+        player_4 = Label(player_frame, textvariable=label_text_4_value, font=("Times", "15", "bold italic"),
+                         fg=label_text_4_color.get()).grid(row=4,
+                                                     column=0,
+                                                     padx=(
+                                                         40, 0),
+                                                     pady=(5, 3))
 
         # DICE_FRAME
         dice_lab = Label(dice_frame, text="dice").pack()
 
-        # GMAE_FRAME
+        # GAME_FRAME
 
         red_home = Button(game_frame, bg="red", padx=13, pady=6)
         red_home.grid(row=0, column=0, padx=(100, 10), pady=(100, 10))
@@ -123,47 +171,33 @@ class Gui:
         pw = StringVar()
         u2 = Entry(log_in_page, textvariable=pw, width=35).grid(row=1, column=1, padx=(10, 0))
 
-        enable_colors = []
-
-        for col, status in Player.colors_in_use.items():
-            if not status:
-                enable_colors.append(col)
         color_clicked = StringVar()
-        color_clicked.set(enable_colors[0])
+        color_clicked.set(self.enable_colors[0])
 
-        color_clicked = StringVar()
-
-        drop = OptionMenu(log_in_page, color_clicked, *enable_colors)
+        drop = OptionMenu(log_in_page, color_clicked, *self.enable_colors)
         drop.config(width=29)
         drop.grid(row=2, column=1, padx=(10, 0))
 
-        def login_clicked():
-            global username
-            username = un.get()
-            global password
-            password = pw.get()
-            global mycolor
-            mycolor = color_clicked.get()
-            ID = len(enable_colors)-1
-            Game.players.append(self.Bord.add_player(username, password, mycolor, ID))
-            print(Game.players)
-
-
-        Login = Button(log_in_page, text="LOGIN", padx=123, command=login_clicked)
+        Login = Button(log_in_page, text="LOGIN", padx=123,
+                       command=lambda: self.login_clicked(un.get(), pw.get(), color_clicked.get(), log_in_page))
         Login.grid(row=3, column=0, columnspan=2, padx=(50, 0), pady=(10, 10), sticky="W")
 
+    def login_clicked(self, username, password, mycolor, page_name):
+        ID = 5 - len(self.enable_colors)
+        self.Game.players.append(self.Bord.add_player(username, password, mycolor, ID))
+        self.enable_colors.remove(mycolor)
+        if ID == 1:
+            label_text_1_value.set(f'{username}')
+            label_text_1_color.set('red')
 
+        elif ID == 2:
+            label_text_2_value.set(f'{username}')
+            label_text_2_color.set(mycolor)
+        elif ID == 3:
+            label_text_3_value.set(f'{username}')
+            label_text_3_color.set(mycolor)
+        else:
+            label_text_4_value.set(f'{username}')
+            label_text_4_color.set(mycolor)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        page_name.destroy()
