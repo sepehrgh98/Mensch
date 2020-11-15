@@ -8,9 +8,11 @@ class Red(Color):
     piece_position = None
     start_home = 0
 
-    def __init__(self, number):
+    def __init__(self, number, btn_object):
+        self.btn_object = btn_object
         self.save_pieces.append(self)
-        self.piece_position = -1 #means my piece is in save list
+        self.btn_object.grid(row=0, column=0, padx=(100, 10), pady=(100, 10))
+        self.piece_position = -1
         self.number = number
 
 
@@ -24,9 +26,11 @@ class Blue(Color):
     piece_position = None
     start_home = 6
 
-    def __init__(self, number):
+    def __init__(self, number, btn_object):
+        self.btn_object = btn_object
         self.save_pieces.append(self)
-        self.piece_position = -1  # means my piece is in save list
+        self.piece_position = -1
+        self.btn_object.grid(row=6, column=0, padx=(100, 10), pady=(10, 100))
         self.number = number
 
     def __repr__(self):
@@ -39,9 +43,11 @@ class Green(Color):
     piece_position = None
     start_home = 12
 
-    def __init__(self, number):
+    def __init__(self, number, btn_object):
+        self.btn_object = btn_object
         self.save_pieces.append(self)
         self.piece_position = -1  # means my piece is in save list
+        self.btn_object.grid(row=0, column=6, padx=(10, 100), pady=(100, 10))
         self.number = number
 
     def __repr__(self):
@@ -54,9 +60,11 @@ class Yellow(Color):
     piece_position = None
     start_home = 18
 
-    def __init__(self, number):
+    def __init__(self, number, btn_object):
+        self.btn_object = btn_object
         self.save_pieces.append(self)
         self.piece_position = -1  # means my piece is in save list
+        self.btn_object.grid(row=6, column=6, padx=(10, 100), pady=(10, 100))
         self.number = number
 
     def __repr__(self):

@@ -1,20 +1,19 @@
 from tkinter import *
-from Player import *
+from PIL import ImageTk, Image
+from tkinter import filedialog
 
 
 class Gui:
     enable_colors = ['red', 'blue', 'green', 'yellow']
+    dice_btn = 0
 
     def __init__(self, Bord, Game_obj):
         self.file = 0
-        self.game_frame = 0
         self.Game = Game_obj
         self.Bord = Bord
         self.root = Tk()
         self.root.title("Mench")
         self.root.geometry('900x650')
-        self.make_items()
-        self.root.mainloop()
 
     def make_items(self):
         # MENU BAR
@@ -22,7 +21,7 @@ class Gui:
         self.file = Menu(menubar, tearoff=0)
         self.file.add_command(label="Add Player", command=self.add_players_gui)
         self.file.add_separator()
-        self.file.add_command(label="Start Game", command=self.start_game)
+        self.file.add_command(label="Start Game", command=lambda: self.start_game(turn_gui))
         self.file.add_separator()
         self.file.add_command(label="New Game")
         self.file.add_separator()
@@ -30,15 +29,14 @@ class Gui:
         self.root.config(menu=menubar)
         menubar.add_cascade(label="Game", menu=self.file)
 
-
         # DEFINE FRAMES
         player_frame = LabelFrame(self.root)
-        player_frame.grid(row=1, column=0, sticky=W, ipadx=24, ipady=28, padx=(10, 3), pady=(5, 3))
+        player_frame.grid(row=1, column=0, sticky=W, ipadx=23, ipady=26, padx=(10, 3), pady=(5, 3))
+        global dice_frame
         dice_frame = LabelFrame(self.root)
-        dice_frame.grid(row=2, column=0, sticky=W, ipadx=75, ipady=130, padx=(10, 3), pady=(3, 3))
+        dice_frame.grid(row=2, column=0, sticky=W, ipadx=21, ipady=9, padx=(10, 3), pady=(3, 3))
         self.game_frame = LabelFrame(self.root)
         self.game_frame.grid(row=1, column=1, rowspan=2, pady=(5, 0))
-
 
         # PLAYER_FRAME
         player_lab = Label(player_frame, text="Players", font=("Times", "20", "bold italic")).grid(row=0, column=0,
@@ -88,7 +86,25 @@ class Gui:
                                                            pady=(5, 3))
 
         # DICE_FRAME
-        dice_lab = Label(dice_frame, text="dice").pack()
+
+        turn_gui = StringVar()
+        turn_gui.set('')
+        dice_lab = Label(dice_frame, textvariable=turn_gui, font=("Helvetica", "12", "bold italic")).grid(row=0,
+                                                                                                          column=0,
+                                                                                                          padx=(40, 0),
+                                                                                                          pady=(10, 60))
+
+        self.dice_btn = Button(dice_frame, text='Roll Dice...', font=("Helvetica", "12", "bold italic"), state='disabled',
+                          command=lambda: self.dice_clicked())
+        self.dice_btn.grid(row=1, column=0, padx=(40, 0), pady=(10, 10))
+
+        img = Image.open("one.png")
+        img = img.resize((50, 50), Image.ANTIALIAS)
+        img = ImageTk.PhotoImage(img)
+        global panel
+        panel = Label(dice_frame, image=img)
+        panel.image = img
+        panel.grid(row=2, column=0, padx=(40, 0), pady=(60, 10))
 
         # GAME_FRAME
 
@@ -188,7 +204,7 @@ class Gui:
 
     def login_clicked(self, username, password, mycolor, page_name):
         ID = 5 - len(self.enable_colors)
-        self.Game.players.append(self.Bord.add_player(username, password, mycolor, ID))
+        self.Game.players.append(self.Bord.add_player(username, password, mycolor, ID, self.game_frame))
         self.enable_colors.remove(mycolor)
         if ID == 1:
             label_text_1_value.set(f'{username}')
@@ -209,7 +225,45 @@ class Gui:
         if len(self.enable_colors) == 0:
             self.file.entryconfig("Add Player", state="disabled")
 
-    def start_game(self):
+    def start_game(self, turn_gui):
+        self.Game.Turn = self.Game.referesh_turn()
+        T_index = 0
+        game_Turn = self.Game.Turn[T_index]
+        turn_gui.set(f'Turn : {game_Turn}')
+        print('-----------------------------------------------------')
+        print(f'Turn : {game_Turn}')
+
         for i in self.Game.players:
-            print(i)
-        self.Game.Start()
+            if i.color == game_Turn:
+                self.Game.player_now = i
+        self.dice_btn["state"] = NORMAL
+
+
+
+
+
+
+    def dice_clicked(self):
+        self.Game.dice_number = self.Game.player_now.Dice()
+        print(f'dice = {self.Game.dice_number}')
+
+    # def update_dice(self):
+    #     print(3)
+    # panel.destroy()
+    # if dice_num == 1:
+    #     img = Image.open("one.png")
+    # elif dice_num == 2:
+    #     img = Image.open("two.png")
+    # elif dice_num == 3:
+    #     img = Image.open("three.png")
+    # elif dice_num == 4:
+    #     img = Image.open("four.png")
+    # elif dice_num == 5:
+    #     img = Image.open("five.png")
+    # else:
+    #     img = Image.open("six.png")
+    # img = img.resize((50, 50), Image.ANTIALIAS)
+    # img = ImageTk.PhotoImage(img)
+    # panel = Label(dice_frame, image=img)
+    # panel.image = img
+    # panel.grid(row=2, column=0, padx=(40, 0), pady=(60, 10))

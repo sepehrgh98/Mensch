@@ -2,16 +2,22 @@ from Board import *
 from Player import *
 from color import *
 from gui import *
+import time
+
 
 class Game:
     Turn = ['red', 'blue', 'green', 'yellow']
     players = []
     Ranking = []
+    player_now = None
+    dice_number = None
 
     def __init__(self, number_of_players):
         self.number_of_players = number_of_players
         self.myBoard = Board()
         self.gui = Gui(self.myBoard, self)
+        self.gui.make_items()
+        self.gui.root.mainloop()
 
     def piece_position_destination(self, myplayer, d):
         piece_pos_des = {}
@@ -31,39 +37,74 @@ class Game:
                             board_number]
         return piece_pos_des
 
-    def Start(self):
-        self.Turn = self.referesh_turn()
-        T_index = 0
-        dice_number = 0
-        while True:
-            game_Turn = self.Turn[T_index]
-            print('-----------------------------------------------------')
-            print(f'Turn : {game_Turn}')
-            for i in self.players:
-                if i.color == game_Turn:
-                    for _ in range(3):
-                        dice_number = i.Dice()
-                        print(f'dice = {dice_number}')
-                        if dice_number == 6 or self.may_3_times(i):
-                            break
-                    moveable_pieces = self.piece_position_destination(i, dice_number)
-                    if len(moveable_pieces) != 0:
-                        print(moveable_pieces)
-                        p = int(input('choose the piece :')) - 1
-                        a = list(moveable_pieces.keys())
-                        li = moveable_pieces[a[p]]
-                        self.move(a[p], li[1], dice_number)
-                        print(self.myBoard.board_game)
-                        print(f'save list : {Red.save_pieces}      ,save list : {Blue.save_pieces}      ,save list : {Green.save_pieces}       ,save list : {Yellow.save_pieces}')
-                        print(f'winner list : {Red.winer_pieces}     ,winner list : {Blue.winer_pieces}     ,winner list : {Green.winer_pieces}   ,winner list : {Yellow.winer_pieces}')
-                    if i.Win():
-                        self.Turn.remove(game_Turn)
-                        self.Ranking.append(i)
-            if len(self.Turn) == 0:
-                break
-            if dice_number != 6:
-                T_index += 1
-            T_index = T_index % (len(self.Turn))
+    def Start(self, turn_gui, dice_btn):
+        pass
+        # self.Turn = self.referesh_turn()
+        # T_index = 0
+        # dice_number = 0
+        # while True:
+        #     game_Turn = self.Turn[T_index]
+        #     turn_gui.set(f'Turn : {game_Turn}')
+        #     print('-----------------------------------------------------')
+        #     print(f'Turn : {game_Turn}')
+        #     for i in self.players:
+        #         if i.color == game_Turn:
+        #             self.player_now = i
+        #
+        #     dice_btn["state"] = NORMAL
+        #     if self.dice_number != None:
+        #
+        #     if self.gui.dice_btn_flag:
+        #         for _ in range(3):
+        #             if self.gui.dice_btn_flag:
+        #                 dice_number = player_now.Dice()
+        #                 print(f'dice = {dice_number}')
+        #                 if dice_number == 6 or self.may_3_times(player_now):
+        #                     break
+        #             self.gui.dice_btn_flag = False
+        #
+        #
+        #         break
+        #         moveable_pieces = self.piece_position_destination(player_now, dice_number)
+        #         if len(moveable_pieces) != 0:
+        #             print(moveable_pieces)
+        #             p = int(input('choose the piece :')) - 1
+        #             a = list(moveable_pieces.keys())
+        #             li = moveable_pieces[a[p]]
+        #             self.move(a[p], li[1], dice_number)
+        #             print(self.myBoard.board_game)
+        #             print(
+        #                 f'save list : {Red.save_pieces}      ,save list : {Blue.save_pieces}      ,save list : {Green.save_pieces}       ,save list : {Yellow.save_pieces}')
+        #             print(
+        #                 f'winner list : {Red.winer_pieces}     ,winner list : {Blue.winer_pieces}     ,winner list : {Green.winer_pieces}   ,winner list : {Yellow.winer_pieces}')
+        #         if player_now.Win():
+        #             self.Turn.remove(game_Turn)
+        #             self.Ranking.append(player_now)
+                # for i in self.players:
+                #     if i.color == game_Turn:
+                #         for _ in range(3):
+                #             dice_number = i.Dice()
+                #             print(f'dice = {dice_number}')
+                #             if dice_number == 6 or self.may_3_times(i):
+                #                 break
+                #         moveable_pieces = self.piece_position_destination(i, dice_number)
+                #         if len(moveable_pieces) != 0:
+                #             print(moveable_pieces)
+                #             p = int(input('choose the piece :')) - 1
+                #             a = list(moveable_pieces.keys())
+                #             li = moveable_pieces[a[p]]
+                #             self.move(a[p], li[1], dice_number)
+                #             print(self.myBoard.board_game)
+                #             print(f'save list : {Red.save_pieces}      ,save list : {Blue.save_pieces}      ,save list : {Green.save_pieces}       ,save list : {Yellow.save_pieces}')
+                #             print(f'winner list : {Red.winer_pieces}     ,winner list : {Blue.winer_pieces}     ,winner list : {Green.winer_pieces}   ,winner list : {Yellow.winer_pieces}')
+                #         if i.Win():
+                #             self.Turn.remove(game_Turn)
+                #             self.Ranking.append(i)
+                # if len(self.Turn) == 0:
+                #     break
+                # if dice_number != 6:
+                #     T_index += 1
+                # T_index = T_index % (len(self.Turn))
 
     def move(self, piece, Destination_B, dice_number):
         if piece.piece_position == -1:
