@@ -5,11 +5,13 @@ from tkinter.ttk import *
 from gui import *
 
 
+
+
 class Player:
     player_numbers = 0
     colors_in_use = {'red': False, 'blue': False, 'green': False, 'yellow': False}
-
-    def __init__(self, username, password, color, playernum, game_frame):
+    def __init__(self, username, password, color, playernum, game_frame, btn_list):
+        self.btn_list = btn_list
         self.username = username
         self.password = password
         self.playernum = playernum
@@ -39,22 +41,23 @@ class Player:
 
     def make_pieces(self):
         if self.color == 'red':
-            photo_r = PhotoImage(file = r"E:\Maktab\Mench\red.png")
+            photo_r = PhotoImage(file=r"E:\Maktab\Mench\red.png")
             photoimage_r = photo_r.subsample(8, 10)
-            r1 = Red(1, Button(self.game_frame, image=photoimage_r, padx=13, pady=6))
-            r2 = Red(2, Button(self.game_frame, image=photoimage_r, padx=13, pady=6))
-            r3 = Red(3, Button(self.game_frame, image=photoimage_r, padx=13, pady=6))
-            r4 = Red(4, Button(self.game_frame, image=photoimage_r, padx=13, pady=6))
+            r1 = Red(1, self.btn_list[0])
+            r2 = Red(2, self.btn_list[1])
+            r3 = Red(3, self.btn_list[2])
+            r4 = Red(4, self.btn_list[3])
+
             Player.colors_in_use['red'] = True
             return r1, r2, r3, r4
 
         elif self.color == 'blue':
             photo_b = PhotoImage(file=r"E:\Maktab\Mench\blue.png")
             photoimage_b = photo_b.subsample(10, 10)
-            b1 = Blue(1, Button(self.game_frame, image=photoimage_b, padx=13, pady=6))
-            b2 = Blue(2, Button(self.game_frame, image=photoimage_b, padx=13, pady=6))
-            b3 = Blue(3, Button(self.game_frame, image=photoimage_b, padx=13, pady=6))
-            b4 = Blue(4, Button(self.game_frame, image=photoimage_b, padx=13, pady=6))
+            b1 = Blue(1, Button(self.game_frame, bg='aqua', text='1', padx=13, pady=6).grid(row=7, column=0, padx=(100, 10), pady=(10, 10)))
+            b2 = Blue(2, Button(self.game_frame, bg='aqua', text='2', padx=13, pady=6).grid(row=7, column=1, padx=(10, 10), pady=(10, 10)))
+            b3 = Blue(3, Button(self.game_frame, bg='aqua', text='3', padx=13, pady=6).grid(row=8, column=0, padx=(100, 10), pady=(10, 100)))
+            b4 = Blue(4, Button(self.game_frame, bg='aqua', text='4', padx=13, pady=6).grid(row=8, column=1, padx=(10, 10), pady=(10, 100)))
             Player.colors_in_use['blue'] = True
             return b1, b2, b3, b4
 

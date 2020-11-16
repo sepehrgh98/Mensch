@@ -1,3 +1,7 @@
+from gui import *
+from tkinter import *
+
+
 class Color:
     pass
 
@@ -11,9 +15,9 @@ class Red(Color):
     def __init__(self, number, btn_object):
         self.btn_object = btn_object
         self.save_pieces.append(self)
-        self.btn_object.grid(row=0, column=0, padx=(100, 10), pady=(100, 10))
-        self.piece_position = -1
         self.number = number
+        self.piece_position = -1
+
 
 
     def __repr__(self):
@@ -27,10 +31,11 @@ class Blue(Color):
     start_home = 6
 
     def __init__(self, number, btn_object):
+
         self.btn_object = btn_object
+
         self.save_pieces.append(self)
         self.piece_position = -1
-        self.btn_object.grid(row=6, column=0, padx=(100, 10), pady=(10, 100))
         self.number = number
 
     def __repr__(self):
