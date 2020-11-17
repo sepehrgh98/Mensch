@@ -43,6 +43,10 @@ class Player:
         if self.color == 'red':
             photo_r = PhotoImage(file=r"E:\Maktab\Mench\red.png")
             photoimage_r = photo_r.subsample(8, 10)
+
+            for i in self.btn_list:
+                i['bg'] = ['pink']
+
             r1 = Red(1, self.btn_list[0])
             r2 = Red(2, self.btn_list[1])
             r3 = Red(3, self.btn_list[2])
@@ -54,30 +58,38 @@ class Player:
         elif self.color == 'blue':
             photo_b = PhotoImage(file=r"E:\Maktab\Mench\blue.png")
             photoimage_b = photo_b.subsample(10, 10)
-            b1 = Blue(1, Button(self.game_frame, bg='aqua', text='1', padx=13, pady=6).grid(row=7, column=0, padx=(100, 10), pady=(10, 10)))
-            b2 = Blue(2, Button(self.game_frame, bg='aqua', text='2', padx=13, pady=6).grid(row=7, column=1, padx=(10, 10), pady=(10, 10)))
-            b3 = Blue(3, Button(self.game_frame, bg='aqua', text='3', padx=13, pady=6).grid(row=8, column=0, padx=(100, 10), pady=(10, 100)))
-            b4 = Blue(4, Button(self.game_frame, bg='aqua', text='4', padx=13, pady=6).grid(row=8, column=1, padx=(10, 10), pady=(10, 100)))
+            for i in self.btn_list:
+                i['bg'] = ['aqua']
+
+            b1 = Blue(1, self.btn_list[0])
+            b2 = Blue(2, self.btn_list[1])
+            b3 = Blue(3, self.btn_list[2])
+            b4 = Blue(4, self.btn_list[3])
             Player.colors_in_use['blue'] = True
             return b1, b2, b3, b4
 
         elif self.color == 'green':
             photo_g = PhotoImage(file=r"E:\Maktab\Mench\green.png")
             photoimage_g = photo_g.subsample(7, 8)
-            g1 = Green(1, Button(self.game_frame, image=photoimage_g, padx=13, pady=6))
-            g2 = Green(2, Button(self.game_frame, image=photoimage_g, padx=13, pady=6))
-            g3 = Green(3, Button(self.game_frame, image=photoimage_g, padx=13, pady=6))
-            g4 = Green(4, Button(self.game_frame, image=photoimage_g, padx=13, pady=6))
+            for i in self.btn_list:
+                i['bg'] = ['Chartreuse']
+
+            g1 = Green(1, self.btn_list[0])
+            g2 = Green(2, self.btn_list[1])
+            g3 = Green(3, self.btn_list[2])
+            g4 = Green(4, self.btn_list[3])
             Player.colors_in_use['green'] = True
             return g1, g2, g3, g4
 
         elif self.color == 'yellow':
             photo_y = PhotoImage(file=r"E:\Maktab\Mench\yellow.png")
             photoimage_y = photo_y.subsample(8, 10)
-            y1 = Yellow(1, Button(self.game_frame, image=photoimage_y, padx=13, pady=6))
-            y2 = Yellow(2, Button(self.game_frame, image=photoimage_y, padx=13, pady=6))
-            y3 = Yellow(3, Button(self.game_frame, image=photoimage_y, padx=13, pady=6))
-            y4 = Yellow(4, Button(self.game_frame, image=photoimage_y, padx=13, pady=6))
+            for i in self.btn_list:
+                i['bg'] = ['Gold']
+            y1 = Yellow(1, self.btn_list[0])
+            y2 = Yellow(2, self.btn_list[1])
+            y3 = Yellow(3, self.btn_list[2])
+            y4 = Yellow(4, self.btn_list[3])
             Player.colors_in_use['yellow'] = True
             return y1, y2, y3, y4
 

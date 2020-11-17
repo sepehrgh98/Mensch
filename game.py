@@ -106,6 +106,7 @@ class Game:
                 # T_index = T_index % (len(self.Turn))
 
     def move(self, piece, Destination_B, dice_number):
+        print(type(dice_number))
         if piece.piece_position == -1:
             piece.piece_position = 0
             if self.myBoard.board_game[Destination_B] != None:
@@ -124,6 +125,8 @@ class Game:
                 self.myBoard.board_game[M] = None
                 piece.piece_position = piece.piece_position + dice_number
                 self.myBoard.board_game[Destination_B] = piece
+                print(f'mydis = {Destination_B}')
+                return Destination_B
             elif piece.piece_position + dice_number == 24:
                 M = piece.piece_position + piece.start_home - 24 if piece.piece_position + piece.start_home >= 24 else piece.piece_position + piece.start_home
                 self.myBoard.board_game[M] = None

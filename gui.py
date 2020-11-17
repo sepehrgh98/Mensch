@@ -9,13 +9,19 @@ class Gui:
     dice_btn = 0
     dice_number = None
     counter = 0
-    T_index = 0
+    T_index = -1
     turn_gui = None
     panel = None
     moveable_pieces = {}
     board_game_btn = []
+    red_home_btn = []
+    blue_home_btn = []
+    green_home_btn = []
+    yellow_home_btn = []
     piece_choosed = []
+    piece_in_game = {}
     home_dis = 0
+    TURN = None
 
     def __init__(self, Bord, Game_obj):
         self.file = 0
@@ -23,7 +29,7 @@ class Gui:
         self.Bord = Bord
         self.root = Tk()
         self.root.title("Mench")
-        self.root.geometry('1200x1000')
+        # self.root.geometry('1200x1000')
         self.myroot = self.root
 
     def make_items(self):
@@ -110,8 +116,8 @@ class Gui:
                                                                                                                pady=(
                                                                                                                    10,
                                                                                                                    60))
-        self.dice_number = StringVar()
-        self.dice_number.set('')
+        self.dice_number = IntVar()
+        self.dice_number.set(0)
         dice_number = Label(dice_frame, textvariable=self.dice_number, font=("Helvetica", "12", "bold italic")).grid(
             row=3,
             column=0,
@@ -123,7 +129,7 @@ class Gui:
                                command=lambda: self.dice_clicked())
         self.dice_btn.grid(row=1, column=0, padx=(40, 0), pady=(10, 10))
 
-        img = Image.open("one.png")
+        img = Image.open("no_dice.png")
         img = img.resize((50, 50), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(img)
         self.panel = Label(dice_frame, image=img)
@@ -132,41 +138,57 @@ class Gui:
 
         # GAME_FRAME
 
-        red_home = Button(game_frame, bg="red", padx=13, pady=6)
-        red_home.grid(row=0, column=0, padx=(100, 10), pady=(100, 10))
-        red_home = Button(game_frame, bg="red", padx=13, pady=6)
-        red_home.grid(row=0, column=1, padx=(10, 10), pady=(100, 10))
-        red_home = Button(game_frame, bg="red", padx=13, pady=6)
-        red_home.grid(row=1, column=0, padx=(100, 10), pady=(10, 10))
-        red_home = Button(game_frame, bg="red", padx=13, pady=6)
-        red_home.grid(row=1, column=1, padx=(10, 10), pady=(10, 10))
+        red_home_1 = Button(game_frame, bg="red", padx=13, pady=6)
+        red_home_1.grid(row=0, column=0, padx=(100, 10), pady=(100, 10))
+        self.red_home_btn.append(red_home_1)
+        red_home_2 = Button(game_frame, bg="red", padx=13, pady=6)
+        red_home_2.grid(row=0, column=1, padx=(10, 10), pady=(100, 10))
+        self.red_home_btn.append(red_home_2)
+        red_home_3 = Button(game_frame, bg="red", padx=13, pady=6)
+        red_home_3.grid(row=1, column=0, padx=(100, 10), pady=(10, 10))
+        self.red_home_btn.append(red_home_3)
+        red_home_4 = Button(game_frame, bg="red", padx=13, pady=6)
+        red_home_4.grid(row=1, column=1, padx=(10, 10), pady=(10, 10))
+        self.red_home_btn.append(red_home_4)
 
-        green_home = Button(game_frame, bg="green", padx=13, pady=6)
-        green_home.grid(row=0, column=7, padx=(10, 10), pady=(100, 10))
-        green_home = Button(game_frame, bg="green", padx=13, pady=6)
-        green_home.grid(row=0, column=8, padx=(10, 100), pady=(100, 10))
-        green_home = Button(game_frame, bg="green", padx=13, pady=6)
-        green_home.grid(row=1, column=7, padx=(10, 10), pady=(10, 10))
-        green_home = Button(game_frame, bg="green", padx=13, pady=6)
-        green_home.grid(row=1, column=8, padx=(10, 100), pady=(10, 10))
+        green_home_1 = Button(game_frame, bg="green", padx=13, pady=6)
+        green_home_1.grid(row=0, column=7, padx=(10, 10), pady=(100, 10))
+        self.green_home_btn.append(green_home_1)
+        green_home_2 = Button(game_frame, bg="green", padx=13, pady=6)
+        green_home_2.grid(row=0, column=8, padx=(10, 100), pady=(100, 10))
+        self.green_home_btn.append(green_home_2)
+        green_home_3 = Button(game_frame, bg="green", padx=13, pady=6)
+        green_home_3.grid(row=1, column=7, padx=(10, 10), pady=(10, 10))
+        self.green_home_btn.append(green_home_3)
+        green_home_4 = Button(game_frame, bg="green", padx=13, pady=6)
+        green_home_4.grid(row=1, column=8, padx=(10, 100), pady=(10, 10))
+        self.green_home_btn.append(green_home_4)
 
-        blue_home = Button(game_frame, bg="blue", padx=13, pady=6)
-        blue_home.grid(row=7, column=0, padx=(100, 10), pady=(10, 10))
-        blue_home = Button(game_frame, bg="blue", padx=13, pady=6)
-        blue_home.grid(row=7, column=1, padx=(10, 10), pady=(10, 10))
-        blue_home = Button(game_frame, bg="blue", padx=13, pady=6)
-        blue_home.grid(row=8, column=0, padx=(100, 10), pady=(10, 100))
-        blue_home = Button(game_frame, bg="blue", padx=13, pady=6)
-        blue_home.grid(row=8, column=1, padx=(10, 10), pady=(10, 100))
+        blue_home_1 = Button(game_frame, bg="blue", padx=13, pady=6)
+        blue_home_1.grid(row=7, column=0, padx=(100, 10), pady=(10, 10))
+        self.blue_home_btn.append(blue_home_1)
+        blue_home_2 = Button(game_frame, bg="blue", padx=13, pady=6)
+        blue_home_2.grid(row=7, column=1, padx=(10, 10), pady=(10, 10))
+        self.blue_home_btn.append(blue_home_2)
+        blue_home_3 = Button(game_frame, bg="blue", padx=13, pady=6)
+        blue_home_3.grid(row=8, column=0, padx=(100, 10), pady=(10, 100))
+        self.blue_home_btn.append(blue_home_3)
+        blue_home_4 = Button(game_frame, bg="blue", padx=13, pady=6)
+        blue_home_4.grid(row=8, column=1, padx=(10, 10), pady=(10, 100))
+        self.blue_home_btn.append(blue_home_4)
 
-        yellow_home = Button(game_frame, bg="yellow", padx=13, pady=6)
-        yellow_home.grid(row=7, column=7, padx=(10, 10), pady=(10, 10))
-        yellow_home = Button(game_frame, bg="yellow", padx=13, pady=6)
-        yellow_home.grid(row=7, column=8, padx=(10, 100), pady=(10, 10))
-        yellow_home = Button(game_frame, bg="yellow", padx=13, pady=6)
-        yellow_home.grid(row=8, column=7, padx=(10, 10), pady=(10, 100))
-        yellow_home = Button(game_frame, bg="yellow", padx=13, pady=6)
-        yellow_home.grid(row=8, column=8, padx=(10, 100), pady=(10, 100))
+        yellow_home_1 = Button(game_frame, bg="yellow", padx=13, pady=6)
+        yellow_home_1.grid(row=7, column=7, padx=(10, 10), pady=(10, 10))
+        self.yellow_home_btn.append(yellow_home_1)
+        yellow_home_2 = Button(game_frame, bg="yellow", padx=13, pady=6)
+        yellow_home_2.grid(row=7, column=8, padx=(10, 100), pady=(10, 10))
+        self.yellow_home_btn.append(yellow_home_2)
+        yellow_home_3 = Button(game_frame, bg="yellow", padx=13, pady=6)
+        yellow_home_3.grid(row=8, column=7, padx=(10, 10), pady=(10, 100))
+        self.yellow_home_btn.append(yellow_home_3)
+        yellow_home_4 = Button(game_frame, bg="yellow", padx=13, pady=6)
+        yellow_home_4.grid(row=8, column=8, padx=(10, 100), pady=(10, 100))
+        self.yellow_home_btn.append(yellow_home_4)
 
         btn_1 = Button(game_frame, text="1", bg="red", padx=13, pady=6, command=lambda: self.board_clicked(1))
         btn_1.grid(row=3, column=1, padx=(100, 10), pady=(10, 10))
@@ -304,16 +326,57 @@ class Gui:
         ID = 5 - len(self.enable_colors)
         photo_r = PhotoImage(file=r"E:\Maktab\Mench\red.png")
         photoimage_r = photo_r.subsample(8, 10)
-        global b1, b2, b3, b4
-        b1 = Button(game_frame, bg='pink', text='1', padx=13, pady=6, command=lambda: self.distanation(1))
-        b1.grid(row=0, column=0, padx=(100, 10), pady=(100, 10))
-        b2 = Button(game_frame, bg='pink', text='2', padx=13, pady=6, command=lambda: self.distanation(2))
-        b2.grid(row=0, column=1, padx=(10, 10), pady=(100, 10))
-        b3 = Button(game_frame, bg='pink', text='3', padx=13, pady=6, command=lambda: self.distanation(3))
-        b3.grid(row=1, column=0, padx=(100, 10), pady=(10, 10))
-        b4 = Button(game_frame, bg='pink', text='4', padx=13, pady=6, command=lambda: self.distanation(4))
-        b4.grid(row=1, column=1, padx=(10, 10), pady=(10, 10))
-        self.Game.players.append(self.Bord.add_player(username, password, mycolor, ID, game_frame, [b1, b2, b3, b4]))
+        # global r1, r2, r3, r4, b1, b2, b3, b4, g1, g2, g3, g4, y1, y2, y3, y4
+        if mycolor == 'red':
+            r1 = Button(game_frame, text='1', padx=13, pady=6, command=lambda: self.distanation(1, mycolor))
+            r1.grid(row=0, column=0, padx=(100, 10), pady=(100, 10))
+            r2 = Button(game_frame, text='2', padx=13, pady=6, command=lambda: self.distanation(2, mycolor))
+            r2.grid(row=0, column=1, padx=(10, 10), pady=(100, 10))
+            r3 = Button(game_frame, text='3', padx=13, pady=6, command=lambda: self.distanation(3, mycolor))
+            r3.grid(row=1, column=0, padx=(100, 10), pady=(10, 10))
+            r4 = Button(game_frame, text='4', padx=13, pady=6, command=lambda: self.distanation(4, mycolor))
+            r4.grid(row=1, column=1, padx=(10, 10), pady=(10, 10))
+            self.piece_in_game[mycolor] = [r1, r2, r3, r4]
+            self.Game.players.append(
+                self.Bord.add_player(username, password, mycolor, ID, game_frame, [r1, r2, r3, r4]))
+        elif mycolor == 'blue':
+            b1 = Button(game_frame, text='1', padx=13, pady=6, command=lambda: self.distanation(1, mycolor))
+            b1.grid(row=7, column=0, padx=(100, 10), pady=(10, 10))
+            b2 = Button(game_frame, text='2', padx=13, pady=6, command=lambda: self.distanation(2, mycolor))
+            b2.grid(row=7, column=1, padx=(10, 10), pady=(10, 10))
+            b3 = Button(game_frame, text='3', padx=13, pady=6, command=lambda: self.distanation(3, mycolor))
+            b3.grid(row=8, column=0, padx=(100, 10), pady=(10, 100))
+            b4 = Button(game_frame, text='4', padx=13, pady=6, command=lambda: self.distanation(4, mycolor))
+            b4.grid(row=8, column=1, padx=(10, 10), pady=(10, 100))
+            self.piece_in_game[mycolor] = [b1, b2, b3, b4]
+            self.Game.players.append(
+                self.Bord.add_player(username, password, mycolor, ID, game_frame, [b1, b2, b3, b4]))
+
+        elif mycolor == 'green':
+            g1 = Button(game_frame, text='1', padx=13, pady=6, command=lambda: self.distanation(1, mycolor))
+            g1.grid(row=0, column=7, padx=(10, 10), pady=(100, 10))
+            g2 = Button(game_frame, text='2', padx=13, pady=6, command=lambda: self.distanation(2, mycolor))
+            g2.grid(row=0, column=8, padx=(10, 100), pady=(100, 10))
+            g3 = Button(game_frame, text='3', padx=13, pady=6, command=lambda: self.distanation(3, mycolor))
+            g3.grid(row=1, column=7, padx=(10, 10), pady=(10, 10))
+            g4 = Button(game_frame, text='4', padx=13, pady=6, command=lambda: self.distanation(4, mycolor))
+            g4.grid(row=1, column=8, padx=(10, 100), pady=(10, 10))
+            self.piece_in_game[mycolor] = [g1, g2, g3, g4]
+            self.Game.players.append(
+                self.Bord.add_player(username, password, mycolor, ID, game_frame, [g1, g2, g3, g4]))
+        else:
+            y1 = Button(game_frame, text='1', padx=13, pady=6, command=lambda: self.distanation(1, mycolor))
+            y1.grid(row=7, column=7, padx=(10, 10), pady=(10, 10))
+            y2 = Button(game_frame, text='2', padx=13, pady=6, command=lambda: self.distanation(2, mycolor))
+            y2.grid(row=7, column=8, padx=(10, 100), pady=(10, 10))
+            y3 = Button(game_frame, text='3', padx=13, pady=6, command=lambda: self.distanation(3, mycolor))
+            y3.grid(row=8, column=7, padx=(10, 10), pady=(10, 100))
+            y4 = Button(game_frame, text='4', padx=13, pady=6, command=lambda: self.distanation(4, mycolor))
+            y4.grid(row=8, column=8, padx=(10, 100), pady=(10, 100))
+            self.piece_in_game[mycolor] = [y1, y2, y3, y4]
+            self.Game.players.append(
+                self.Bord.add_player(username, password, mycolor, ID, game_frame, [y1, y2, y3, y4]))
+
         self.enable_colors.remove(mycolor)
         if ID == 1:
             label_text_1_value.set(f'{username}')
@@ -335,13 +398,10 @@ class Gui:
             self.file.entryconfig("Add Player", state="disabled")
 
     def start_game(self):
-        # self.Game.Start(turn_gui, self.dice_btn)
         self.Game.Turn = self.Game.referesh_turn()
-        game_Turn = self.change_turn()
+        self.change_turn()
         print(self.T_index)
-        for i in self.Game.players:
-            if i.color == game_Turn:
-                self.Game.player_now = i
+
         self.dice_btn["state"] = NORMAL
 
     def dice_clicked(self):
@@ -349,42 +409,19 @@ class Gui:
         self.dice_number.set(self.Game.dice_number)
         print(f'dice = {self.Game.dice_number}')
         self.update_dice(self.Game.dice_number)
-        if self.Game.dice_number == 6 or self.Game.may_3_times(self.Game.player_now):
-            self.dice_btn["state"] = DISABLED
-            self.moveable_pieces = self.Game.piece_position_destination(self.Game.player_now, self.Game.dice_number)
-            print(self.moveable_pieces)
-            if len(self.moveable_pieces) != 0:
-                for i in self.moveable_pieces.keys():
-                    i.btn_object["fg"] = 'green'
-
-
-
-
-
-
-        else:
-            self.Game.dice_number = "Can't!"
-            self.dice_number.set(self.Game.dice_number)
-            print(f'dice = {self.Game.dice_number}')
-            self.counter += 1
-        if self.counter == 3:
-            self.counter = 0
-            self.dice_btn["state"] = DISABLED
-            self.T_index += 1
-            self.T_index = self.T_index % (len(self.Game.Turn))
-            print(self.T_index)
-            game_Turn = self.change_turn()
-            for i in self.Game.players:
-                if i.color == game_Turn:
-                    self.Game.player_now = i
-            self.dice_btn["state"] = NORMAL
+        self.dice_checker()
 
     def change_turn(self):
-        game_Turn = self.Game.Turn[self.T_index]
-        self.turn_gui.set(f'Turn : {game_Turn}')
+        self.T_index += 1
+        self.T_index = self.T_index % (len(self.Game.Turn))
+        self.TURN = self.Game.Turn[self.T_index]
+        self.turn_gui.set(f'Turn : {self.TURN}')
         print('-----------------------------------------------------')
-        print(f'Turn : {game_Turn}')
-        return game_Turn
+        print(f'Turn : {self.TURN}')
+        for i in self.Game.players:
+            if i.color == self.TURN:
+                self.Game.player_now = i
+        self.dice_btn["state"] = NORMAL
 
     def update_dice(self, dice_num):
         self.panel = None
@@ -406,20 +443,24 @@ class Gui:
         panel.image = img
         panel.grid(row=2, column=0, padx=(40, 0), pady=(60, 10))
 
-    def distanation(self, num):
+    def distanation(self, num, mycolor):
 
-        for i in [b1, b2, b3, b4]:
+        for i in self.piece_in_game[mycolor]:
             if i["relief"] == 'sunken':
                 i["relief"] = ['raised']
-
-        if num == 1:
-            b1["relief"] = ['sunken']
-        elif num == 2:
-            b2["relief"] = ['sunken']
-        elif num == 3:
-            b3["relief"] = ['sunken']
-        else:
-            b4["relief"] = ['sunken']
+        for i in range(len(self.piece_in_game[mycolor])):
+            if num == 1:
+                x = self.piece_in_game[mycolor]
+                x[0]["relief"] = ['sunken']
+            elif num == 2:
+                x = self.piece_in_game[mycolor]
+                x[1]["relief"] = ['sunken']
+            elif num == 3:
+                x = self.piece_in_game[mycolor]
+                x[2]["relief"] = ['sunken']
+            else:
+                x = self.piece_in_game[mycolor]
+                x[3]["relief"] = ['sunken']
 
         mykey = self.moveable_pieces.keys()
         for i in mykey:
@@ -430,7 +471,75 @@ class Gui:
 
     def board_clicked(self, num):
         print(self.piece_choosed[-1])
-        Dis = self.Game.move(self.piece_choosed[-1], self.home_dis[1], self.dice_number)
+        Dis = self.Game.move(self.piece_choosed[-1], self.home_dis[1], self.dice_number.get())
         self.board_game_btn[num - 1]["bg"] = "white"
         myrow = self.board_game_btn[Dis].grid_info()['row']
-        myrow = self.board_game_btn[Dis].grid_info()['column']
+        mycolumn = self.board_game_btn[Dis].grid_info()['column']
+        mypadx = self.board_game_btn[Dis].grid_info()['padx']
+        mypady = self.board_game_btn[Dis].grid_info()['pady']
+
+        li = list(self.piece_in_game.keys())
+        for i in li:
+            if i != self.TURN:
+                for btn in self.piece_in_game[i]:
+                    if btn.grid_info()['row'] == myrow and btn.grid_info()['column'] == mycolumn:
+                        if i == 'red':
+                            r = self.red_home_btn[0].grid_info()['row']
+                            c = self.red_home_btn[0].grid_info()['column']
+                            btn.grid(row=r, column=c)
+                        elif i == 'blue':
+                            r = self.blue_home_btn[0].grid_info()['row']
+                            c = self.blue_home_btn[0].grid_info()['column']
+                            btn.grid(row=r, column=c)
+                        elif i == 'green':
+                            r = self.green_home_btn[0].grid_info()['row']
+                            c = self.green_home_btn[0].grid_info()['column']
+                            btn.grid(row=r, column=c)
+                        else:
+                            r = self.yellow_home_btn[0].grid_info()['row']
+                            c = self.yellow_home_btn[0].grid_info()['column']
+                            btn.grid(row=r, column=c)
+                        if i == self.TURN:
+                            self.board_game_btn[self.home_dis[1]]["bg"] = ['white']
+
+        for i in self.piece_in_game[self.TURN]:
+            if i["relief"] == 'sunken':
+                i.grid(row=myrow, column=mycolumn, padx=mypadx, pady=mypady)
+                i["relief"] = ['raised']
+
+        self.change_turn()
+        img = Image.open("white.png")
+        img = img.resize((50, 50), Image.ANTIALIAS)
+        img = ImageTk.PhotoImage(img)
+        panel = Label(dice_frame, image=img)
+        panel.image = img
+        panel.grid(row=2, column=0, padx=(40, 0), pady=(60, 10))
+
+    def dice_checker(self):
+        print(f'player now : {self.Game.player_now}')
+        if self.Game.dice_number == 6 or self.Game.may_3_times(self.Game.player_now):
+            self.dice_btn["state"] = DISABLED
+            self.moveable_pieces = self.Game.piece_position_destination(self.Game.player_now, self.Game.dice_number)
+            self.counter = 0
+            print(self.moveable_pieces)
+            if len(self.moveable_pieces) != 0:
+                for i in self.moveable_pieces.keys():
+                    i.btn_object["fg"] = ['green']
+        else:
+            self.Game.dice_number = "Can't!"
+            self.dice_number.set(self.Game.dice_number)
+            print(f'dice = {self.Game.dice_number}')
+            self.counter += 1
+
+        if self.counter == 3:
+            self.counter = 0
+            self.dice_btn["state"] = DISABLED
+            self.change_turn()
+
+            for i in self.Game.players:
+                if i.color == self.TURN:
+                    self.Game.player_now = i
+            self.dice_btn["state"] = NORMAL
+
+    def remove_btn(self):
+        pass
