@@ -7,6 +7,7 @@ class Player:
     player_numbers = 0
     colors_in_use = {'red': False, 'blue': False, 'green': False, 'yellow': False}
 
+
     def __init__(self, username, password, color, playernum, game_frame, btn_list):
         self.btn_list = btn_list
         self.username = username
@@ -75,6 +76,7 @@ class Player:
         return random.choice([1, 2, 3, 4, 5, 6])
 
     def Win(self):
+        print(f'.,.,.,., {self.player_pieces}')
         if len(self.player_pieces[0].winer_pieces) == 4:
             return True
         else:

@@ -1,6 +1,4 @@
 from Board import *
-from Player import *
-from color import *
 from gui import *
 import time
 
@@ -20,6 +18,7 @@ class Game:
         self.gui.root.mainloop()
 
     def piece_position_destination(self, myplayer, d):
+        print(self.myBoard.board_game)
         piece_pos_des = {}
         for i in myplayer.player_pieces:
             board_number = i.piece_position + d + i.start_home
@@ -40,7 +39,7 @@ class Game:
         return piece_pos_des
 
     def move(self, piece, Destination_B, dice_number):
-        print(type(dice_number))
+
         if piece.piece_position == -1:
             piece.piece_position = 0
             if self.myBoard.board_game[Destination_B] is not None:
@@ -100,5 +99,5 @@ class Game:
         time.sleep(120)
         print(self.gui.dice_number)
 
-    def win(self, piece):
-        pass
+    def new_game(self):
+        return Game()
