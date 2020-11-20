@@ -1,12 +1,10 @@
 from color import *
 import random
-from gui import *
 
 
 class Player:
     player_numbers = 0
     colors_in_use = {'red': False, 'blue': False, 'green': False, 'yellow': False}
-
 
     def __init__(self, username, password, color, playernum, game_frame, btn_list):
         self.btn_list = btn_list

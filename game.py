@@ -1,7 +1,3 @@
-from Board import *
-from gui import *
-import time
-
 
 class Game:
     Turn = ['red', 'blue', 'green', 'yellow']
@@ -10,15 +6,11 @@ class Game:
     player_now = None
     dice_number = None
 
-    def __init__(self):
+    def __init__(self, board):
+        self.myBoard = board
 
-        self.myBoard = Board()
-        self.gui = Gui(self.myBoard, self)
-        self.gui.make_items()
-        self.gui.root.mainloop()
 
     def piece_position_destination(self, myplayer, d):
-        print(self.myBoard.board_game)
         piece_pos_des = {}
         for i in myplayer.player_pieces:
             board_number = i.piece_position + d + i.start_home
@@ -58,7 +50,6 @@ class Game:
                 self.myBoard.board_game[M] = None
                 piece.piece_position = piece.piece_position + dice_number
                 self.myBoard.board_game[Destination_B] = piece
-                print(f'mydis = {Destination_B}')
                 return Destination_B
             elif piece.piece_position + dice_number == 24:
                 M = piece.piece_position + piece.start_home - 24 if piece.piece_position + piece.start_home >= 24 else piece.piece_position + piece.start_home
@@ -93,11 +84,3 @@ class Game:
                     return True
         return False
 
-    def dicing(self, dice_btn):
-        dice_btn["state"] = NORMAL
-        self.gui.dice_number.get()
-        time.sleep(120)
-        print(self.gui.dice_number)
-
-    def new_game(self):
-        return Game()
