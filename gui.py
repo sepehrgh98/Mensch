@@ -3,6 +3,7 @@ from PIL import ImageTk, Image
 from color import *
 from Board import Board
 from game import Game
+from game_history import *
 
 
 class Gui:
@@ -25,6 +26,8 @@ class Gui:
     TURN = None
     win_btn = []
     label_text_1_color = ''
+    un = ''
+    pw = ''
 
     def __init__(self):
         self.Bord = Board()
@@ -36,6 +39,15 @@ class Gui:
         self.root.geometry('950x717')
         self.myroot = self.root
         self.make_items()
+    def check_user_pass(self):
+        mydataBase = {}
+        with open("./DATABASE.txt", 'r') as database:
+            for line in database:
+                line = line.rstrip('\n')
+                line = line.replace(' ', ',', 1)
+                line = line.replace(' ', '')
+                user_pass = line.split(',')
+                mydataBase[user_pass[0]] = user_pass[1]
 
     def make_items(self):
         # MENU BAR
@@ -332,16 +344,21 @@ class Gui:
         log_in_page.title("LOG IN")
         log_in_page.geometry('400x250')
 
-        uname = Label(log_in_page, bg='#FFCA7A', text="Username:").grid(row=0, padx=(50, 0), pady=(60, 10), sticky="W")
-        passwd = Label(log_in_page, bg='#FFCA7A', text="Password:").grid(row=1, padx=(50, 0), pady=(10, 10), sticky="W")
-        color = Label(log_in_page, bg='#FFCA7A', text="Color:").grid(row=2, padx=(50, 0), pady=(10, 10), sticky="W")
+        uname = Label(log_in_page, bg='#FFCA7A', text="Username:")
+        uname.grid(row=0, padx=(50, 0), pady=(60, 10), sticky="W")
+        passwd = Label(log_in_page, bg='#FFCA7A', text="Password:")
+        passwd.grid(row=1, padx=(50, 0), pady=(10, 10), sticky="W")
+        color = Label(log_in_page, bg='#FFCA7A', text="Color:")
+        color.grid(row=2, padx=(50, 0), pady=(10, 10), sticky="W")
 
-        un = StringVar()
-        u1 = Entry(log_in_page, bg='#F08A5D', textvariable=un, width=35).grid(row=0, column=1, padx=(10, 0),
-                                                                              pady=(60, 5))
+        self.un = StringVar()
+        u1 = Entry(log_in_page, bg='#F08A5D', textvariable=self.un, width=35)
+        u1.grid(row=0, column=1, padx=(10, 0), pady=(60, 5))
 
-        pw = StringVar()
-        u2 = Entry(log_in_page, bg='#F08A5D', textvariable=pw, width=35).grid(row=1, column=1, padx=(10, 0))
+
+        self.pw = StringVar()
+        u2 = Entry(log_in_page, bg='#F08A5D', textvariable=self.pw, width=35)
+        u2.grid(row=1, column=1, padx=(10, 0))
 
         color_clicked = StringVar()
         color_clicked.set(self.enable_colors[0])
@@ -353,7 +370,7 @@ class Gui:
         drop.grid(row=2, column=1, padx=(10, 0))
 
         Login = Button(log_in_page, bg='#F08A5D', text="LOGIN", padx=123,
-                       command=lambda: self.login_clicked(un.get(), pw.get(), color_clicked.get(), log_in_page))
+                       command=lambda: self.login_clicked(self.un.get(), self.pw.get(), color_clicked.get(), log_in_page))
         Login.grid(row=3, column=0, columnspan=2, padx=(50, 0), pady=(10, 10), sticky="W")
 
     def login_clicked(self, username, password, mycolor, page_name):
@@ -478,18 +495,24 @@ class Gui:
         self.dice_checker()
 
     def change_turn(self):
-
-        self.T_index += 1
-        self.T_index = self.T_index % (len(self.Game.Turn))
-        self.TURN = self.Game.Turn[self.T_index]
-        self.turn_gui.set(f'Turn : {self.TURN}')
-        print('-----------------------------------------------------')
-        print(f'Turn : {self.TURN}')
-        for i in self.Game.players:
-            if i.color == self.TURN:
-                self.Game.player_now = i
-        self.dice_btn["state"] = NORMAL
-
+        try:
+            self.T_index += 1
+            self.T_index = self.T_index % (len(self.Game.Turn))
+            self.TURN = self.Game.Turn[self.T_index]
+            self.turn_gui.set(f'Turn : {self.TURN}')
+            print('-----------------------------------------------------')
+            print(f'Turn : {self.TURN}')
+            for i in self.Game.players:
+                if i.color == self.TURN:
+                    self.Game.player_now = i
+            self.dice_btn["state"] = NORMAL
+        except ZeroDivisionError:
+            print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+            print('#######################################################')
+            print('TURN LIST IS EMPTY...')
+            print('...GAME FINISHED SUCCESSFULLY!')
+            print('#######################################################')
+            print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
     def update_dice(self, dice_num):
         self.panel = None
         if dice_num == 1:
@@ -535,14 +558,19 @@ class Gui:
 
         self.piece_choosed[-1].btn_object["relief"] = ['sunken']
 
-
     def board_clicked(self, num):
-        Dis = self.Game.move(self.piece_choosed[-1], self.home_dis[1], self.dice_number.get())
-        self.board_game_btn[num - 1]["bg"] = "#0A2F35"
-        myrow = self.board_game_btn[Dis].grid_info()['row']
-        mycolumn = self.board_game_btn[Dis].grid_info()['column']
-        mypadx = self.board_game_btn[Dis].grid_info()['padx']
-        mypady = self.board_game_btn[Dis].grid_info()['pady']
+        try:
+            Dis = self.Game.move(self.piece_choosed[-1], self.home_dis[1], self.dice_number.get())
+            self.board_game_btn[num - 1]["bg"] = "#0A2F35"
+            myrow = self.board_game_btn[Dis].grid_info()['row']
+            mycolumn = self.board_game_btn[Dis].grid_info()['column']
+            mypadx = self.board_game_btn[Dis].grid_info()['padx']
+            mypady = self.board_game_btn[Dis].grid_info()['pady']
+        except IndexError:
+            print('##################################################')
+            print('...INVALID BUTTON CLICKED!')
+            print('##################################################')
+
 
         li = list(self.piece_in_game.keys())
         for i in li:
@@ -567,16 +595,24 @@ class Gui:
                             btn.grid(row=r, column=c)
                         if i == self.TURN:
                             self.board_game_btn[self.home_dis[1]]["bg"] = ['white']
+        try:
+            for i in self.piece_in_game[self.TURN]:
+                if i["relief"] == 'sunken':
+                    i.grid(row=myrow, column=mycolumn, padx=mypadx, pady=mypady)
+                    i["relief"] = ['raised']
 
-        for i in self.piece_in_game[self.TURN]:
-            if i["relief"] == 'sunken':
-                i.grid(row=myrow, column=mycolumn, padx=mypadx, pady=mypady)
+            for i in self.piece_in_game[self.TURN]:
+                i["borderwidth"] = None
                 i["relief"] = ['raised']
 
-        for i in self.piece_in_game[self.TURN]:
-            i["borderwidth"] = None
-            i["relief"] = ['raised']
+        except KeyError:
+            print('##################################################')
+            print('...NO PLAYER ADDED!')
+            print('##################################################')
+
+
         if self.Game.dice_number == 6:
+            self.dice_btn["state"] = DISABLED
             img = Image.open("w.png")
             img = img.resize((50, 50), Image.ANTIALIAS)
             img = ImageTk.PhotoImage(img)
@@ -602,8 +638,6 @@ class Gui:
 
             ok = Button(reward, bg='#F08A5D', text="OK", padx=50, command=lambda: self.exit(reward))
             ok.grid(row=1, column=0, columnspan=2, padx=(30, 0), pady=(10, 10))
-
-            self.dice_btn["state"] = NORMAL
         else:
             self.change_turn()
             img = Image.open("w.png")
@@ -649,140 +683,155 @@ class Gui:
             self.dice_btn["state"] = NORMAL
 
     def win_clicked(self, color):
-        Dis = self.Game.move(self.piece_choosed[-1], self.home_dis[1], self.dice_number.get())
-        if self.piece_choosed[-1].__class__ == Red:
-            self.piece_choosed[-1].btn_object.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
-            self.red_win["bg"] = ['#0A2F35']
-            if len(self.piece_choosed[-1].winer_pieces) == 2:
-                img = Image.open("2.png")
-                img = img.resize((20, 20), Image.ANTIALIAS)
-                img = ImageTk.PhotoImage(img)
-                mypanel = Label(game_frame, bg='#0A2F35', image=img)
-                mypanel.image = img
-                mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
-            elif len(self.piece_choosed[-1].winer_pieces) == 3:
-                img = Image.open("3.png")
-                img = img.resize((20, 20), Image.ANTIALIAS)
-                img = ImageTk.PhotoImage(img)
-                mypanel = Label(game_frame, bg='#0A2F35', image=img)
-                mypanel.image = img
-                mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
-            elif len(self.piece_choosed[-1].winer_pieces) == 4:
-                img = Image.open("4.png")
-                img = img.resize((20, 20), Image.ANTIALIAS)
-                img = ImageTk.PhotoImage(img)
-                mypanel = Label(game_frame, bg='#0A2F35', image=img)
-                mypanel.image = img
-                mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
-        elif self.piece_choosed[-1].__class__ == Blue:
-            self.piece_choosed[-1].btn_object.grid(row=6, column=4, padx=(10, 10), pady=(10, 10))
-            self.blue_win["bg"] = ['#0A2F35']
-            if len(self.piece_choosed[-1].winer_pieces) == 2:
-                img = Image.open("2.png")
-                img = img.resize((20, 20), Image.ANTIALIAS)
-                img = ImageTk.PhotoImage(img)
-                mypanel = Label(game_frame, bg='#0A2F35', image=img)
-                mypanel.image = img
-                mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
-            elif len(self.piece_choosed[-1].winer_pieces) == 3:
-                img = Image.open("3.png")
-                img = img.resize((20, 20), Image.ANTIALIAS)
-                img = ImageTk.PhotoImage(img)
-                mypanel = Label(game_frame, bg='#0A2F35', image=img)
-                mypanel.image = img
-                mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
-            elif len(self.piece_choosed[-1].winer_pieces) == 4:
-                img = Image.open("4.png")
-                img = img.resize((20, 20), Image.ANTIALIAS)
-                img = ImageTk.PhotoImage(img)
-                mypanel = Label(game_frame, bg='#0A2F35', image=img)
-                mypanel.image = img
-                mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
-        elif self.piece_choosed[-1].__class__ == Green:
-            self.piece_choosed[-1].btn_object.grid(row=2, column=4, padx=(10, 10), pady=(10, 10))
-            self.green_win["bg"] = ['#0A2F35']
-            if len(self.piece_choosed[-1].winer_pieces) == 2:
-                img = Image.open("2.png")
-                img = img.resize((20, 20), Image.ANTIALIAS)
-                img = ImageTk.PhotoImage(img)
-                mypanel = Label(game_frame, bg='#0A2F35', image=img)
-                mypanel.image = img
-                mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
-            elif len(self.piece_choosed[-1].winer_pieces) == 3:
-                img = Image.open("3.png")
-                img = img.resize((20, 20), Image.ANTIALIAS)
-                img = ImageTk.PhotoImage(img)
-                mypanel = Label(game_frame, bg='#0A2F35', image=img)
-                mypanel.image = img
-                mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
-            elif len(self.piece_choosed[-1].winer_pieces) == 4:
-                img = Image.open("4.png")
-                img = img.resize((20, 20), Image.ANTIALIAS)
-                img = ImageTk.PhotoImage(img)
-                mypanel = Label(game_frame, bg='#0A2F35', image=img)
-                mypanel.image = img
-                mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
-        else:
-            self.piece_choosed[-1].btn_object.grid(row=4, column=6, padx=(10, 10), pady=(10, 10))
-            self.yellow_win["bg"] = ['#0A2F35']
-            if len(self.piece_choosed[-1].winer_pieces) == 2:
-                img = Image.open("2.png")
-                img = img.resize((20, 20), Image.ANTIALIAS)
-                img = ImageTk.PhotoImage(img)
-                mypanel = Label(game_frame, bg='#0A2F35', image=img)
-                mypanel.image = img
-                mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
-            elif len(self.piece_choosed[-1].winer_pieces) == 3:
-                img = Image.open("3.png")
-                img = img.resize((20, 20), Image.ANTIALIAS)
-                img = ImageTk.PhotoImage(img)
-                mypanel = Label(game_frame, bg='#0A2F35', image=img)
-                mypanel.image = img
-                mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
-            elif len(self.piece_choosed[-1].winer_pieces) == 4:
-                img = Image.open("4.png")
-                img = img.resize((20, 20), Image.ANTIALIAS)
-                img = ImageTk.PhotoImage(img)
-                mypanel = Label(game_frame, bg='#0A2F35', image=img)
-                mypanel.image = img
-                mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
+        try:
+            Dis = self.Game.move(self.piece_choosed[-1], self.home_dis[1], self.dice_number.get())
+            if self.piece_choosed[-1].__class__ == Red:
+                self.piece_choosed[-1].btn_object.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
+                self.red_win["bg"] = ['#0A2F35']
+                if len(self.piece_choosed[-1].winer_pieces) == 2:
+                    img = Image.open("2.png")
+                    img = img.resize((20, 20), Image.ANTIALIAS)
+                    img = ImageTk.PhotoImage(img)
+                    mypanel = Label(game_frame, bg='#0A2F35', image=img)
+                    mypanel.image = img
+                    mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
+                elif len(self.piece_choosed[-1].winer_pieces) == 3:
+                    img = Image.open("3.png")
+                    img = img.resize((20, 20), Image.ANTIALIAS)
+                    img = ImageTk.PhotoImage(img)
+                    mypanel = Label(game_frame, bg='#0A2F35', image=img)
+                    mypanel.image = img
+                    mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
+                elif len(self.piece_choosed[-1].winer_pieces) == 4:
+                    img = Image.open("4.png")
+                    img = img.resize((20, 20), Image.ANTIALIAS)
+                    img = ImageTk.PhotoImage(img)
+                    mypanel = Label(game_frame, bg='#0A2F35', image=img)
+                    mypanel.image = img
+                    mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
+            elif self.piece_choosed[-1].__class__ == Blue:
+                self.piece_choosed[-1].btn_object.grid(row=6, column=4, padx=(10, 10), pady=(10, 10))
+                self.blue_win["bg"] = ['#0A2F35']
+                if len(self.piece_choosed[-1].winer_pieces) == 2:
+                    img = Image.open("2.png")
+                    img = img.resize((20, 20), Image.ANTIALIAS)
+                    img = ImageTk.PhotoImage(img)
+                    mypanel = Label(game_frame, bg='#0A2F35', image=img)
+                    mypanel.image = img
+                    mypanel.grid(row=6, column=4, padx=(10, 10), pady=(10, 10))
+                elif len(self.piece_choosed[-1].winer_pieces) == 3:
+                    img = Image.open("3.png")
+                    img = img.resize((20, 20), Image.ANTIALIAS)
+                    img = ImageTk.PhotoImage(img)
+                    mypanel = Label(game_frame, bg='#0A2F35', image=img)
+                    mypanel.image = img
+                    mypanel.grid(row=6, column=4, padx=(10, 10), pady=(10, 10))
+                elif len(self.piece_choosed[-1].winer_pieces) == 4:
+                    img = Image.open("4.png")
+                    img = img.resize((20, 20), Image.ANTIALIAS)
+                    img = ImageTk.PhotoImage(img)
+                    mypanel = Label(game_frame, bg='#0A2F35', image=img)
+                    mypanel.image = img
+                    mypanel.grid(row=6, column=4, padx=(10, 10), pady=(10, 10))
+            elif self.piece_choosed[-1].__class__ == Green:
+                self.piece_choosed[-1].btn_object.grid(row=2, column=4, padx=(10, 10), pady=(10, 10))
+                self.green_win["bg"] = ['#0A2F35']
+                if len(self.piece_choosed[-1].winer_pieces) == 2:
+                    img = Image.open("2.png")
+                    img = img.resize((20, 20), Image.ANTIALIAS)
+                    img = ImageTk.PhotoImage(img)
+                    mypanel = Label(game_frame, bg='#0A2F35', image=img)
+                    mypanel.image = img
+                    mypanel.grid(row=2, column=4, padx=(10, 10), pady=(10, 10))
+                elif len(self.piece_choosed[-1].winer_pieces) == 3:
+                    img = Image.open("3.png")
+                    img = img.resize((20, 20), Image.ANTIALIAS)
+                    img = ImageTk.PhotoImage(img)
+                    mypanel = Label(game_frame, bg='#0A2F35', image=img)
+                    mypanel.image = img
+                    mypanel.grid(row=2, column=4, padx=(10, 10), pady=(10, 10))
+                elif len(self.piece_choosed[-1].winer_pieces) == 4:
+                    img = Image.open("4.png")
+                    img = img.resize((20, 20), Image.ANTIALIAS)
+                    img = ImageTk.PhotoImage(img)
+                    mypanel = Label(game_frame, bg='#0A2F35', image=img)
+                    mypanel.image = img
+                    mypanel.grid(row=2, column=4, padx=(10, 10), pady=(10, 10))
+            else:
+                self.piece_choosed[-1].btn_object.grid(row=4, column=6, padx=(10, 10), pady=(10, 10))
+                self.yellow_win["bg"] = ['#0A2F35']
+                if len(self.piece_choosed[-1].winer_pieces) == 2:
+                    img = Image.open("2.png")
+                    img = img.resize((20, 20), Image.ANTIALIAS)
+                    img = ImageTk.PhotoImage(img)
+                    mypanel = Label(game_frame, bg='#0A2F35', image=img)
+                    mypanel.image = img
+                    mypanel.grid(row=4, column=6, padx=(10, 10), pady=(10, 10))
+                elif len(self.piece_choosed[-1].winer_pieces) == 3:
+                    img = Image.open("3.png")
+                    img = img.resize((20, 20), Image.ANTIALIAS)
+                    img = ImageTk.PhotoImage(img)
+                    mypanel = Label(game_frame, bg='#0A2F35', image=img)
+                    mypanel.image = img
+                    mypanel.grid(row=4, column=6, padx=(10, 10), pady=(10, 10))
+                elif len(self.piece_choosed[-1].winer_pieces) == 4:
+                    img = Image.open("4.png")
+                    img = img.resize((20, 20), Image.ANTIALIAS)
+                    img = ImageTk.PhotoImage(img)
+                    mypanel = Label(game_frame, bg='#0A2F35', image=img)
+                    mypanel.image = img
+                    mypanel.grid(row=4, column=6, padx=(10, 10), pady=(10, 10))
 
-        self.piece_in_game[color].remove(self.piece_choosed[-1].btn_object)
+            self.piece_in_game[color].remove(self.piece_choosed[-1].btn_object)
+        except IndexError:
+            print('##################################################')
+            print('...INVALID BUTTON CLICKED!')
+            print('##################################################')
+        try:
+            if self.Game.player_now.Win():
+                self.Game.Ranking.append(self.Game.player_now)
+                print(f'{self.Game.player_now} Win!')
+                self.Game.Turn.remove(self.TURN)
+
+            if len(self.Game.Ranking) == len(self.Game.players) and self.Game.player_now.Win:
+                ranking_page = Toplevel()
+                ranking_page.configure(background='#FFCA7A')
+                ranking_page.title("RANKING")
+                ranking_page.geometry('400x250')
+
+                king = Image.open("king.png")
+                king = king.resize((40, 40), Image.ANTIALIAS)
+                king = ImageTk.PhotoImage(king)
+                panel = Label(ranking_page, bg='#FFCA7A', image=king)
+                panel.image = king
+                panel.grid(row=0, column=1, padx=(40, 0), pady=(60, 10))
+
+                myrank = []
+                for i in range(len(self.Game.Ranking)):
+                    myrank.append(Label(ranking_page, bg='#FFCA7A', font=("Helvetica", "10", "bold italic"),
+                                        text=f"{i + 1} - {self.Game.Ranking[i]}"))
+
+                for i in range(len(myrank)):
+                    myrank[i].grid(row=i, padx=(50, 0), pady=(60, 10), sticky="W")
+
+                # log
+                rank = ""
+                for i in self.Game.Ranking:
+                    rank = rank + " - " + i.username
+                game_his = log_def(rank, "./game_history.log")
+                game_his.info("...done!", exc_info=True)
+        except AttributeError:
+            print('##################################################')
+            print('...NO PLAYER ADDED!')
+            print('##################################################')
 
 
-
-
-
-        if self.Game.player_now.Win():
-            self.Game.Ranking.append(self.Game.player_now)
-            print(f'{self.Game.player_now} Win!')
-            self.Game.Turn.remove(self.TURN)
-
-        if len(self.Game.Ranking) == len(self.Game.players) and self.Game.player_now.Win:
-            ranking_page = Toplevel()
-            ranking_page.configure(background='#FFCA7A')
-            ranking_page.title("RANKING")
-            ranking_page.geometry('400x250')
-
-            king = Image.open("king.png")
-            king = king.resize((40, 40), Image.ANTIALIAS)
-            king = ImageTk.PhotoImage(king)
-            panel = Label(ranking_page, bg='#FFCA7A', image=king)
-            panel.image = king
-            panel.grid(row=0, column=1, padx=(40, 0), pady=(60, 10))
-
-            myrank = []
-            for i in range(len(self.Game.Ranking)):
-                myrank.append(Label(ranking_page, bg='#FFCA7A', font=("Helvetica", "10", "bold italic"),
-                                    text=f"{i + 1} - {self.Game.Ranking[i]}"))
-
-            for i in range(len(myrank)):
-                myrank[i].grid(row=i, padx=(50, 0), pady=(60, 10), sticky="W")
 
         self.change_turn()
 
     def exit(self, myroot):
         myroot.destroy()
+        self.dice_btn["state"] = NORMAL
 
     def new_game(self):
         del self.Game

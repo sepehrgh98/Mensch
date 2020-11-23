@@ -15,9 +15,7 @@ class Player:
         self.game_frame = game_frame
         self.player_pieces = [i for i in self.make_pieces()]
         Player.player_numbers += 1
-
-    def check_user_pass(self):
-        pass
+        self.check_user_pass()
 
     def __repr__(self):
         return f'Player {self.playernum} with color {self.color}'
@@ -79,3 +77,5 @@ class Player:
             return True
         else:
             return False
+
+

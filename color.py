@@ -39,7 +39,7 @@ class Green(Color):
     save_pieces = []
     winer_pieces = []
     piece_position = None
-    start_home = 12
+    start_home = 18
 
     def __init__(self, number, btn_object):
         self.btn_object = btn_object
@@ -55,7 +55,7 @@ class Yellow(Color):
     save_pieces = []
     winer_pieces = []
     piece_position = None
-    start_home = 18
+    start_home = 12
 
     def __init__(self, number, btn_object):
         self.btn_object = btn_object
