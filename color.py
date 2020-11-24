@@ -14,6 +14,7 @@ class Red(Color):
         self.save_pieces.append(self)
         self.number = number
         self.piece_position = -1
+        self.color = 'red'
 
     def __repr__(self):
         return f'r{self.number}'
@@ -30,6 +31,7 @@ class Blue(Color):
         self.save_pieces.append(self)
         self.piece_position = -1
         self.number = number
+        self.color = 'blue'
 
     def __repr__(self):
         return f'b{self.number}'
@@ -46,6 +48,7 @@ class Green(Color):
         self.save_pieces.append(self)
         self.piece_position = -1  # means my piece is in save list
         self.number = number
+        self.color = 'green'
 
     def __repr__(self):
         return f'g{self.number}'
@@ -62,6 +65,7 @@ class Yellow(Color):
         self.save_pieces.append(self)
         self.piece_position = -1  # means my piece is in save list
         self.number = number
+        self.color = 'yellow'
 
     def __repr__(self):
         return f'y{self.number}'

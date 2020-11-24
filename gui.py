@@ -4,6 +4,7 @@ from color import *
 from Board import Board
 from game import Game
 from game_history import *
+from tkinter import messagebox
 
 
 class Gui:
@@ -26,8 +27,6 @@ class Gui:
     TURN = None
     win_btn = []
     label_text_1_color = ''
-    un = ''
-    pw = ''
 
     def __init__(self):
         self.Bord = Board()
@@ -36,10 +35,13 @@ class Gui:
         self.root = Tk()
         self.root.title("Mench")
         self.root.configure(background='#FFCA7A')
-        self.root.geometry('950x717')
+        self.root.geometry('1005x733')
+        self.root.iconbitmap('E:/Maktab/Mench/images/logo.ico')
+        self.root.resizable(0,0)
         self.myroot = self.root
         self.make_items()
-    def check_user_pass(self):
+
+    def check_user_pass(self, myuser, mypass):
         mydataBase = {}
         with open("./DATABASE.txt", 'r') as database:
             for line in database:
@@ -48,6 +50,18 @@ class Gui:
                 line = line.replace(' ', '')
                 user_pass = line.split(',')
                 mydataBase[user_pass[0]] = user_pass[1]
+
+        database_usr= mydataBase.keys()
+        if myuser in database_usr:
+            if mydataBase[myuser] == mypass:
+                print(f'WELCOME {myuser}')
+                return True
+            else:
+                print('INCORRECT PASSWORD!')
+                return 'INCORRECT PASSWORD!'
+        else:
+            print("this user Has not registered!")
+            return "this user Has not registered!"
 
     def make_items(self):
         # MENU BAR
@@ -64,35 +78,34 @@ class Gui:
         self.root.config(menu=menubar)
         menubar.add_cascade(label="Game", menu=self.file)
 
-        self.file.entryconfig("Start Game", state="normal")
+        self.file.entryconfig("Start Game", state="disable")
 
         # DEFINE FRAMES
         player_frame = LabelFrame(self.root, background="#F56038")
-        player_frame.grid(row=1, column=0, sticky=W, ipadx=23, ipady=36, padx=(10, 3), pady=(5, 3))
+        player_frame.grid(row=1, column=0, sticky=W, ipadx=40, ipady=36, padx=(10, 3), pady=(5, 3))
         global dice_frame
         dice_frame = LabelFrame(self.root, background="#FFA325")
-        dice_frame.grid(row=2, column=0, sticky=W, ipadx=21, ipady=12, padx=(10, 3), pady=(3, 3))
+        dice_frame.grid(row=2, column=0, sticky=W, ipadx=38, ipady=12, padx=(10, 3), pady=(3, 3))
         global game_frame
         game_frame = LabelFrame(self.root, background="#0A2F35")
         game_frame.grid(row=1, column=1, rowspan=2, pady=(5, 0))
 
         # PLAYER_FRAME
         player_lab = Label(player_frame, bg="#F56038", text="Players", font=("Times", "20", "bold italic"))
-
-        player_lab.grid(row=0, column=0, padx=(40, 0), pady=(10, 3))
+        player_lab.grid(row=0, column=0, ipadx=7, padx=(50, 0), pady=(10, 3))
 
         global player_1, player_2, player_3, player_4
         player_1 = Label(player_frame, bg="#F56038", font=("Times", "15", "bold italic"))
-        player_1.grid(row=1, column=0, padx=(40, 0), pady=(30, 3))
+        player_1.grid(row=1, column=0, pady=(30, 3), sticky=W)
 
         player_2 = Label(player_frame, bg="#F56038", font=("Times", "15", "bold italic"))
-        player_2.grid(row=2, column=0, padx=(40, 0), pady=(5, 3))
+        player_2.grid(row=2, column=0, pady=(5, 3), sticky=W)
 
         player_3 = Label(player_frame, bg="#F56038", font=("Times", "15", "bold italic"))
-        player_3.grid(row=3, column=0, padx=(40, 0), pady=(5, 3))
+        player_3.grid(row=3, column=0, pady=(5, 3), sticky=W)
 
         player_4 = Label(player_frame, bg="#F56038", font=("Times", "15", "bold italic"))
-        player_4.grid(row=4, column=0, padx=(40, 0), pady=(5, 3))
+        player_4.grid(row=4, column=0, pady=(5, 3), sticky=W)
 
         # DICE_FRAME
 
@@ -100,46 +113,45 @@ class Gui:
         self.turn_gui = StringVar()
         self.turn_gui.set('')
         dice_lab = Label(dice_frame, bg="#FFA325", textvariable=self.turn_gui, font=("Helvetica", "12", "bold italic"))
-        dice_lab.grid(row=0, column=0, padx=(40, 0), pady=(10, 60))
+        dice_lab.grid(row=0, column=0, padx=(50, 0), pady=(10, 60))
         self.dice_number = IntVar()
         self.dice_number.set(0)
         dice_number = Label(dice_frame, bg="#FFA325", textvariable=self.dice_number,
                             font=("Helvetica", "12", "bold italic"))
-        dice_number.grid(row=3, column=0, padx=(40, 0), pady=(10, 60))
+        dice_number.grid(row=3, column=0, padx=(65, 0), pady=(10, 60))
 
         self.dice_btn = Button(dice_frame, bg="#FFA329", text='Roll Dice...', font=("Helvetica", "12", "bold italic"),
                                state='disabled',
                                command=lambda: self.dice_clicked())
-        self.dice_btn.grid(row=1, column=0, padx=(40, 0), pady=(10, 10))
+        self.dice_btn.grid(row=1, column=0, padx=(65, 0), pady=(10, 10))
 
-        img = Image.open("no_dice.png")
+        img = Image.open("./images/no_dice.png")
         img = img.resize((50, 50), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(img)
         self.panel = Label(dice_frame, bg='#FFA325', image=img)
         self.panel.image = img
-        self.panel.grid(row=2, column=0, padx=(40, 0), pady=(60, 10))
+        self.panel.grid(row=2, column=0, padx=(65, 0), pady=(60, 10))
 
         # GAME_FRAME
-
         # IMAGES
 
-        borR = Image.open('redcircle.png')
+        borR = Image.open('./images/redcircle.png')
         borR = borR.resize((60, 55), Image.ANTIALIAS)
         im1 = ImageTk.PhotoImage(borR)
 
-        borB = Image.open('bluecircle.png')
+        borB = Image.open('./images/bluecircle.png')
         borB = borB.resize((60, 55), Image.ANTIALIAS)
         im2 = ImageTk.PhotoImage(borB)
 
-        borG = Image.open('greencircle.png')
+        borG = Image.open('./images/greencircle.png')
         borG = borG.resize((60, 55), Image.ANTIALIAS)
         im3 = ImageTk.PhotoImage(borG)
 
-        borY = Image.open('yellowcircle.png')
+        borY = Image.open('./images/yellowcircle.png')
         borY = borY.resize((60, 55), Image.ANTIALIAS)
         im4 = ImageTk.PhotoImage(borY)
 
-        borW = Image.open('boardcircle.png')
+        borW = Image.open('./images/boardcircle.png')
         borW = borW.resize((60, 55), Image.ANTIALIAS)
         im5 = ImageTk.PhotoImage(borW)
 
@@ -351,13 +363,13 @@ class Gui:
         color = Label(log_in_page, bg='#FFCA7A', text="Color:")
         color.grid(row=2, padx=(50, 0), pady=(10, 10), sticky="W")
 
-        self.un = StringVar()
-        u1 = Entry(log_in_page, bg='#F08A5D', textvariable=self.un, width=35)
+        un = StringVar()
+        u1 = Entry(log_in_page, bg='#F08A5D', textvariable=un, width=35)
         u1.grid(row=0, column=1, padx=(10, 0), pady=(60, 5))
 
 
-        self.pw = StringVar()
-        u2 = Entry(log_in_page, bg='#F08A5D', textvariable=self.pw, width=35)
+        pw = StringVar()
+        u2 = Entry(log_in_page, bg='#F08A5D', textvariable=pw, width=35)
         u2.grid(row=1, column=1, padx=(10, 0))
 
         color_clicked = StringVar()
@@ -370,119 +382,129 @@ class Gui:
         drop.grid(row=2, column=1, padx=(10, 0))
 
         Login = Button(log_in_page, bg='#F08A5D', text="LOGIN", padx=123,
-                       command=lambda: self.login_clicked(self.un.get(), self.pw.get(), color_clicked.get(), log_in_page))
+                       command=lambda: self.login_clicked(un.get(), pw.get(), color_clicked.get(), log_in_page, Login))
         Login.grid(row=3, column=0, columnspan=2, padx=(50, 0), pady=(10, 10), sticky="W")
 
-    def login_clicked(self, username, password, mycolor, page_name):
-        ID = 5 - len(self.enable_colors)
-        if mycolor == 'red':
-            borR = Image.open('red.png')
-            borR = borR.resize((40, 40), Image.ANTIALIAS)
-            red = ImageTk.PhotoImage(borR)
-            r1 = Button(game_frame, image=red, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(1, mycolor))
-            r1.image = red
-            r1.grid(row=0, column=0, padx=(10, 10), pady=(10, 10))
-            r2 = Button(game_frame, image=red, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(2, mycolor))
-            r2.grid(row=0, column=1, padx=(10, 10), pady=(10, 10))
-            r3 = Button(game_frame, image=red, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(3, mycolor))
-            r3.grid(row=1, column=0, padx=(10, 10), pady=(10, 10))
-            r4 = Button(game_frame, image=red, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(4, mycolor))
-            r4.grid(row=1, column=1, padx=(10, 10), pady=(10, 10))
-            self.piece_in_game[mycolor] = [r1, r2, r3, r4]
-            self.Game.players.append(
-                self.Bord.add_player(username, password, mycolor, ID, game_frame, [r1, r2, r3, r4]))
-        elif mycolor == 'blue':
-            borB = Image.open('blue.png')
-            borB = borB.resize((40, 40), Image.ANTIALIAS)
-            blue = ImageTk.PhotoImage(borB)
-            b1 = Button(game_frame, image=blue, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(1, mycolor))
-            b1.image = blue
-            b1.grid(row=7, column=0, padx=(10, 10), pady=(10, 10))
-            b2 = Button(game_frame, image=blue, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(2, mycolor))
-            b2.grid(row=7, column=1, padx=(10, 10), pady=(10, 10))
-            b3 = Button(game_frame, image=blue, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(3, mycolor))
-            b3.grid(row=8, column=0, padx=(10, 10), pady=(10, 10))
-            b4 = Button(game_frame, image=blue, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(4, mycolor))
-            b4.grid(row=8, column=1, padx=(10, 10), pady=(10, 10))
-            self.piece_in_game[mycolor] = [b1, b2, b3, b4]
-            self.Game.players.append(
-                self.Bord.add_player(username, password, mycolor, ID, game_frame, [b1, b2, b3, b4]))
+    def login_clicked(self, username, password, mycolor, page_name, log_btn):
+        check = True
+        # check = self.check_user_pass(username, password)
+        if check == True:
+            ID = 5 - len(self.enable_colors)
+            if mycolor == 'red':
+                borR = Image.open('./images/red.png')
+                borR = borR.resize((40, 43), Image.ANTIALIAS)
+                red = ImageTk.PhotoImage(borR)
+                r1 = Button(game_frame, image=red, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(1, mycolor))
+                r1.image = red
+                r1.grid(row=0, column=0, padx=(10, 10), pady=(10, 10))
+                r2 = Button(game_frame, image=red, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(2, mycolor))
+                r2.grid(row=0, column=1, padx=(10, 10), pady=(10, 10))
+                r3 = Button(game_frame, image=red, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(3, mycolor))
+                r3.grid(row=1, column=0, padx=(10, 10), pady=(10, 10))
+                r4 = Button(game_frame, image=red, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(4, mycolor))
+                r4.grid(row=1, column=1, padx=(10, 10), pady=(10, 10))
+                self.piece_in_game[mycolor] = [r1, r2, r3, r4]
+                self.Game.players.append(
+                    self.Bord.add_player(username, password, mycolor, ID, game_frame, [r1, r2, r3, r4]))
+            elif mycolor == 'blue':
+                borB = Image.open('./images/blue.png')
+                borB = borB.resize((40, 43), Image.ANTIALIAS)
+                blue = ImageTk.PhotoImage(borB)
+                b1 = Button(game_frame, image=blue, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(1, mycolor))
+                b1.image = blue
+                b1.grid(row=7, column=0, padx=(10, 10), pady=(10, 10))
+                b2 = Button(game_frame, image=blue, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(2, mycolor))
+                b2.grid(row=7, column=1, padx=(10, 10), pady=(10, 10))
+                b3 = Button(game_frame, image=blue, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(3, mycolor))
+                b3.grid(row=8, column=0, padx=(10, 10), pady=(10, 10))
+                b4 = Button(game_frame, image=blue, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(4, mycolor))
+                b4.grid(row=8, column=1, padx=(10, 10), pady=(10, 10))
+                self.piece_in_game[mycolor] = [b1, b2, b3, b4]
+                self.Game.players.append(
+                    self.Bord.add_player(username, password, mycolor, ID, game_frame, [b1, b2, b3, b4]))
 
-        elif mycolor == 'green':
-            borG = Image.open('green.png')
-            borG = borG.resize((40, 40), Image.ANTIALIAS)
-            green = ImageTk.PhotoImage(borG)
-            g1 = Button(game_frame, image=green, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(1, mycolor))
-            g1.image = green
-            g1.grid(row=0, column=7, padx=(10, 10), pady=(10, 10))
-            g2 = Button(game_frame, image=green, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(2, mycolor))
-            g2.grid(row=0, column=8, padx=(10, 10), pady=(10, 10))
-            g3 = Button(game_frame, image=green, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(3, mycolor))
-            g3.grid(row=1, column=7, padx=(10, 10), pady=(10, 10))
-            g4 = Button(game_frame, image=green, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(4, mycolor))
-            g4.grid(row=1, column=8, padx=(10, 10), pady=(10, 10))
-            self.piece_in_game[mycolor] = [g1, g2, g3, g4]
-            self.Game.players.append(
-                self.Bord.add_player(username, password, mycolor, ID, game_frame, [g1, g2, g3, g4]))
+            elif mycolor == 'green':
+                borG = Image.open('./images/green.png')
+                borG = borG.resize((40, 43), Image.ANTIALIAS)
+                green = ImageTk.PhotoImage(borG)
+                g1 = Button(game_frame, image=green, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(1, mycolor))
+                g1.image = green
+                g1.grid(row=0, column=7, padx=(10, 10), pady=(10, 10))
+                g2 = Button(game_frame, image=green, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(2, mycolor))
+                g2.grid(row=0, column=8, padx=(10, 10), pady=(10, 10))
+                g3 = Button(game_frame, image=green, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(3, mycolor))
+                g3.grid(row=1, column=7, padx=(10, 10), pady=(10, 10))
+                g4 = Button(game_frame, image=green, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(4, mycolor))
+                g4.grid(row=1, column=8, padx=(10, 10), pady=(10, 10))
+                self.piece_in_game[mycolor] = [g1, g2, g3, g4]
+                self.Game.players.append(
+                    self.Bord.add_player(username, password, mycolor, ID, game_frame, [g1, g2, g3, g4]))
+            else:
+                borY = Image.open('./images/yellow.png')
+                borY = borY.resize((40, 43), Image.ANTIALIAS)
+                yellow = ImageTk.PhotoImage(borY)
+                y1 = Button(game_frame, image=yellow, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(1, mycolor))
+                y1.image = yellow
+                y1.grid(row=7, column=7, padx=(10, 10), pady=(10, 10))
+                y2 = Button(game_frame, image=yellow, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(2, mycolor))
+                y2.grid(row=7, column=8, padx=(10, 10), pady=(10, 10))
+                y3 = Button(game_frame, image=yellow, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(3, mycolor))
+                y3.grid(row=8, column=7, padx=(10, 10), pady=(10, 10))
+                y4 = Button(game_frame, image=yellow, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
+                            command=lambda: self.distanation(4, mycolor))
+                y4.grid(row=8, column=8, padx=(10, 10), pady=(10, 10))
+                self.piece_in_game[mycolor] = [y1, y2, y3, y4]
+                self.Game.players.append(
+                    self.Bord.add_player(username, password, mycolor, ID, game_frame, [y1, y2, y3, y4]))
+
+            self.enable_colors.remove(mycolor)
+            if ID == 1:
+                player_1['text'] = f"1 - {username}"
+                player_1['fg'] = mycolor
+            elif ID == 2:
+                player_2['text'] = f"2 - {username}"
+                player_2['fg'] = mycolor
+            elif ID == 3:
+                player_3['text'] = f"3 - {username}"
+                player_3['fg'] = mycolor
+            else:
+                player_4['text'] = f"4 - {username}"
+                player_4['fg'] = mycolor
+
+            page_name.destroy()
+
+            if len(self.enable_colors) == 0:
+                self.file.entryconfig("Add Player", state="disabled")
+
+            if len(self.Game.players) >= 2 and len(self.Game.players) <= 4:
+                self.file.entryconfig("Start Game", state="normal")
         else:
-            borY = Image.open('yellow.png')
-            borY = borY.resize((40, 40), Image.ANTIALIAS)
-            yellow = ImageTk.PhotoImage(borY)
-            y1 = Button(game_frame, image=yellow, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(1, mycolor))
-            y1.image = yellow
-            y1.grid(row=7, column=7, padx=(10, 10), pady=(10, 10))
-            y2 = Button(game_frame, image=yellow, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(2, mycolor))
-            y2.grid(row=7, column=8, padx=(10, 10), pady=(10, 10))
-            y3 = Button(game_frame, image=yellow, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(3, mycolor))
-            y3.grid(row=8, column=7, padx=(10, 10), pady=(10, 10))
-            y4 = Button(game_frame, image=yellow, bg="#0A2F35", padx=18, pady=10, borderwidth=0,
-                        command=lambda: self.distanation(4, mycolor))
-            y4.grid(row=8, column=8, padx=(10, 10), pady=(10, 10))
-            self.piece_in_game[mycolor] = [y1, y2, y3, y4]
-            self.Game.players.append(
-                self.Bord.add_player(username, password, mycolor, ID, game_frame, [y1, y2, y3, y4]))
+            messagebox.showerror("Error", check)
+            page_name.destroy()
 
-        self.enable_colors.remove(mycolor)
-        if ID == 1:
-            player_1['text'] = f"1 - {username}"
-            player_1['fg'] = mycolor
-        elif ID == 2:
-            player_2['text'] = f"2 - {username}"
-            player_2['fg'] = mycolor
-        elif ID == 3:
-            player_3['text'] = f"3 - {username}"
-            player_3['fg'] = mycolor
-        else:
-            player_4['text'] = f"4 - {username}"
-            player_4['fg'] = mycolor
-        page_name.destroy()
-
-        if len(self.enable_colors) == 0:
-            self.file.entryconfig("Add Player", state="disabled")
-
-        if len(self.Game.players) >= 2 and len(self.Game.players) <= 4:
-            self.file.entryconfig("Start Game", state="normal")
 
     def start_game(self):
         self.file.entryconfig("Add Player", state="disabled")
         self.Game.Turn = self.Game.referesh_turn()
         self.change_turn()
         self.dice_btn["state"] = NORMAL
+        self.file.entryconfig("Start Game", state="disable")
+
 
     def dice_clicked(self):
         for i in self.board_game_btn:
@@ -516,136 +538,162 @@ class Gui:
     def update_dice(self, dice_num):
         self.panel = None
         if dice_num == 1:
-            img = Image.open("one.png")
+            img = Image.open("./images/one.png")
         elif dice_num == 2:
-            img = Image.open("two.png")
+            img = Image.open("./images/two.png")
         elif dice_num == 3:
-            img = Image.open("three.png")
+            img = Image.open("./images/three.png")
         elif dice_num == 4:
-            img = Image.open("four.png")
+            img = Image.open("./images/four.png")
         elif dice_num == 5:
-            img = Image.open("five.png")
+            img = Image.open("./images/five.png")
         else:
-            img = Image.open("six.png")
+            img = Image.open("./images/six.png")
         img = img.resize((50, 50), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(img)
         panel = Label(dice_frame, bg='#FFA325', image=img)
         panel.image = img
-        panel.grid(row=2, column=0, padx=(40, 0), pady=(60, 10))
+        panel.grid(row=2, column=0, padx=(65, 0), pady=(60, 10))
 
     def distanation(self, num, mycolor):
 
-        for i in self.piece_in_game[mycolor]:
-            if i["relief"] == 'sunken':
-                i["relief"] = ['raised']
-
         mykey = self.moveable_pieces.keys()
+        mypiece = 0
         for i in mykey:
             if i.number == num:
+                mypiece = i
                 self.piece_choosed.append(i)
-                self.home_dis = self.moveable_pieces[i]
+
+        for i in self.board_game_btn:
+            a = i
+            if a['bg'] == 'DarkGoldenRod':
+                a['bg'] = '#0A2F35'
+
+        try:
+            if self.piece_choosed[-1].color == mycolor:
+                for i in self.piece_in_game[mycolor]:
+                    if i["relief"] == 'sunken':
+                        i["relief"] = ['raised']
+
+                self.piece_choosed.append(mypiece)
+                self.home_dis = self.moveable_pieces[mypiece]
                 if self.home_dis[1] == 100:
-                    if i.__class__ == Red:
+                    if mypiece.__class__ == Red:
                         self.red_win["bg"] = ['DarkGoldenRod']
-                    elif i.__class__ == Blue:
+                    elif mypiece.__class__ == Blue:
                         self.blue_win["bg"] = ['DarkGoldenRod']
-                    elif i.__class__ == Green:
+                    elif mypiece.__class__ == Green:
                         self.green_win["bg"] = ['DarkGoldenRod']
                     else:
                         self.yellow_win["bg"] = ['DarkGoldenRod']
                 else:
                     self.board_game_btn[self.home_dis[1]]["bg"] = ['DarkGoldenRod']
 
-        self.piece_choosed[-1].btn_object["relief"] = ['sunken']
-
-    def board_clicked(self, num):
-        try:
-            Dis = self.Game.move(self.piece_choosed[-1], self.home_dis[1], self.dice_number.get())
-            self.board_game_btn[num - 1]["bg"] = "#0A2F35"
-            myrow = self.board_game_btn[Dis].grid_info()['row']
-            mycolumn = self.board_game_btn[Dis].grid_info()['column']
-            mypadx = self.board_game_btn[Dis].grid_info()['padx']
-            mypady = self.board_game_btn[Dis].grid_info()['pady']
-        except IndexError:
-            print('##################################################')
-            print('...INVALID BUTTON CLICKED!')
-            print('##################################################')
-
-
-        li = list(self.piece_in_game.keys())
-        for i in li:
-            if i != self.TURN:
-                for btn in self.piece_in_game[i]:
-                    if btn.grid_info()['row'] == myrow and btn.grid_info()['column'] == mycolumn:
-                        if i == 'red':
-                            r = self.red_home_btn[0].grid_info()['row']
-                            c = self.red_home_btn[0].grid_info()['column']
-                            btn.grid(row=r, column=c)
-                        elif i == 'blue':
-                            r = self.blue_home_btn[0].grid_info()['row']
-                            c = self.blue_home_btn[0].grid_info()['column']
-                            btn.grid(row=r, column=c)
-                        elif i == 'green':
-                            r = self.green_home_btn[0].grid_info()['row']
-                            c = self.green_home_btn[0].grid_info()['column']
-                            btn.grid(row=r, column=c)
-                        else:
-                            r = self.yellow_home_btn[0].grid_info()['row']
-                            c = self.yellow_home_btn[0].grid_info()['column']
-                            btn.grid(row=r, column=c)
-                        if i == self.TURN:
-                            self.board_game_btn[self.home_dis[1]]["bg"] = ['white']
-        try:
-            for i in self.piece_in_game[self.TURN]:
-                if i["relief"] == 'sunken':
-                    i.grid(row=myrow, column=mycolumn, padx=mypadx, pady=mypady)
-                    i["relief"] = ['raised']
-
-            for i in self.piece_in_game[self.TURN]:
-                i["borderwidth"] = None
-                i["relief"] = ['raised']
-
+                self.piece_choosed[-1].btn_object["relief"] = ['sunken']
         except KeyError:
             print('##################################################')
-            print('...NO PLAYER ADDED!')
+            print('...INVALID PIECE CLICKED!')
             print('##################################################')
 
 
-        if self.Game.dice_number == 6:
-            self.dice_btn["state"] = DISABLED
-            img = Image.open("w.png")
-            img = img.resize((50, 50), Image.ANTIALIAS)
-            img = ImageTk.PhotoImage(img)
-            panel = Label(dice_frame, bg='#FFA325', image=img)
-            panel.image = img
-            panel.grid(row=2, column=0, padx=(40, 0), pady=(60, 10))
+    def board_clicked(self, num):
+        flag = False
+        for i in self.board_game_btn:
+            a = i
+            if a['bg'] == 'DarkGoldenRod':
+                flag = True
+        if flag:
+            try:
+                Dis = self.Game.move(self.piece_choosed[-1], self.home_dis[1], self.dice_number.get())
+                self.board_game_btn[num - 1]["bg"] = "#0A2F35"
+                myrow = self.board_game_btn[Dis].grid_info()['row']
+                mycolumn = self.board_game_btn[Dis].grid_info()['column']
+                mypadx = self.board_game_btn[Dis].grid_info()['padx']
+                mypady = self.board_game_btn[Dis].grid_info()['pady']
+            except IndexError:
+                print('##################################################')
+                print('...INVALID BUTTON CLICKED!')
+                print('##################################################')
 
-            reward = Toplevel()
-            reward.configure(background='#FFCA7A')
-            reward.title("REWARD!")
-            reward.geometry('320x120')
 
-            uname = Label(reward, bg='#FFCA7A', text='Wooow  6 !\n Roll again! this is your reward :)',
-                          font=("Helvetica", "11", "bold italic"), anchor='w')
-            uname.grid(row=0, column=1, padx=(0, 0), pady=(13, 10))
+            li = list(self.piece_in_game.keys())
+            try:
+                for i in li:
+                    if i != self.TURN:
+                        for btn in self.piece_in_game[i]:
+                            if btn.grid_info()['row'] == myrow and btn.grid_info()['column'] == mycolumn:
+                                if i == 'red':
+                                    r = self.red_home_btn[0].grid_info()['row']
+                                    c = self.red_home_btn[0].grid_info()['column']
+                                    btn.grid(row=r, column=c)
+                                elif i == 'blue':
+                                    r = self.blue_home_btn[0].grid_info()['row']
+                                    c = self.blue_home_btn[0].grid_info()['column']
+                                    btn.grid(row=r, column=c)
+                                elif i == 'green':
+                                    r = self.green_home_btn[0].grid_info()['row']
+                                    c = self.green_home_btn[0].grid_info()['column']
+                                    btn.grid(row=r, column=c)
+                                else:
+                                    r = self.yellow_home_btn[0].grid_info()['row']
+                                    c = self.yellow_home_btn[0].grid_info()['column']
+                                    btn.grid(row=r, column=c)
 
-            img1 = Image.open("reward.png")
-            img1 = img1.resize((50, 50), Image.ANTIALIAS)
-            img1 = ImageTk.PhotoImage(img1)
-            panel1 = Label(reward, bg='#FFCA7A', image=img1)
-            panel1.image = img1
-            panel1.grid(row=0, column=0, padx=(10, 0), pady=(10, 0))
+            except UnboundLocalError:
+                print('##################################################')
+                print('...INVALID BUTTON CLICKED!')
+                print('##################################################')
+            try:
+                for i in self.piece_in_game[self.TURN]:
+                    if i["relief"] == 'sunken':
+                        i.grid(row=myrow, column=mycolumn, padx=mypadx, pady=mypady)
+                        i["relief"] = ['raised']
 
-            ok = Button(reward, bg='#F08A5D', text="OK", padx=50, command=lambda: self.exit(reward))
-            ok.grid(row=1, column=0, columnspan=2, padx=(30, 0), pady=(10, 10))
-        else:
-            self.change_turn()
-            img = Image.open("w.png")
-            img = img.resize((50, 50), Image.ANTIALIAS)
-            img = ImageTk.PhotoImage(img)
-            panel = Label(dice_frame, bg='#FFA325', image=img)
-            panel.image = img
-            panel.grid(row=2, column=0, padx=(40, 0), pady=(60, 10))
+                for i in self.piece_in_game[self.TURN]:
+                    i["borderwidth"] = None
+                    i["relief"] = ['raised']
+
+            except KeyError:
+                print('##################################################')
+                print('...NO PLAYER ADDED!')
+                print('##################################################')
+
+
+            if self.Game.dice_number == 6:
+                self.dice_btn["state"] = DISABLED
+                img = Image.open("./images/w.png")
+                img = img.resize((50, 50), Image.ANTIALIAS)
+                img = ImageTk.PhotoImage(img)
+                panel = Label(dice_frame, bg='#FFA325', image=img)
+                panel.image = img
+                panel.grid(row=2, column=0, padx=(65, 0), pady=(60, 10))
+
+                reward = Toplevel()
+                reward.configure(background='#FFCA7A')
+                reward.title("REWARD!")
+                reward.geometry('320x120')
+
+                uname = Label(reward, bg='#FFCA7A', text='Wooow  6 !\n Roll again! this is your reward :)',
+                              font=("Helvetica", "11", "bold italic"), anchor='w')
+                uname.grid(row=0, column=1, padx=(0, 0), pady=(13, 10))
+
+                img1 = Image.open("./images/reward.png")
+                img1 = img1.resize((50, 50), Image.ANTIALIAS)
+                img1 = ImageTk.PhotoImage(img1)
+                panel1 = Label(reward, bg='#FFCA7A', image=img1)
+                panel1.image = img1
+                panel1.grid(row=0, column=0, padx=(10, 0), pady=(10, 0))
+
+                ok = Button(reward, bg='#F08A5D', text="OK", padx=50, command=lambda: self.exit(reward))
+                ok.grid(row=1, column=0, columnspan=2, padx=(30, 0), pady=(10, 10))
+            else:
+                self.change_turn()
+                img = Image.open("./images/w.png")
+                img = img.resize((50, 50), Image.ANTIALIAS)
+                img = ImageTk.PhotoImage(img)
+                panel = Label(dice_frame, bg='#FFA325', image=img)
+                panel.image = img
+                panel.grid(row=2, column=0, padx=(65, 0), pady=(60, 10))
 
     def dice_checker(self):
         print(f'player now : {self.Game.player_now}')
@@ -669,12 +717,12 @@ class Gui:
         if self.counter == 3:
             self.counter = 0
             self.dice_btn["state"] = DISABLED
-            img = Image.open("w.png")
+            img = Image.open("./images/w.png")
             img = img.resize((50, 50), Image.ANTIALIAS)
             img = ImageTk.PhotoImage(img)
             self.panel = Label(dice_frame, bg='#FFA325', image=img)
             self.panel.image = img
-            self.panel.grid(row=2, column=0, padx=(40, 0), pady=(60, 10))
+            self.panel.grid(row=2, column=0, padx=(65, 0), pady=(60, 10))
             self.change_turn()
 
             for i in self.Game.players:
@@ -689,21 +737,21 @@ class Gui:
                 self.piece_choosed[-1].btn_object.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
                 self.red_win["bg"] = ['#0A2F35']
                 if len(self.piece_choosed[-1].winer_pieces) == 2:
-                    img = Image.open("2.png")
+                    img = Image.open("./images/2.png")
                     img = img.resize((20, 20), Image.ANTIALIAS)
                     img = ImageTk.PhotoImage(img)
                     mypanel = Label(game_frame, bg='#0A2F35', image=img)
                     mypanel.image = img
                     mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
                 elif len(self.piece_choosed[-1].winer_pieces) == 3:
-                    img = Image.open("3.png")
+                    img = Image.open("./images/3.png")
                     img = img.resize((20, 20), Image.ANTIALIAS)
                     img = ImageTk.PhotoImage(img)
                     mypanel = Label(game_frame, bg='#0A2F35', image=img)
                     mypanel.image = img
                     mypanel.grid(row=4, column=2, padx=(10, 10), pady=(10, 10))
                 elif len(self.piece_choosed[-1].winer_pieces) == 4:
-                    img = Image.open("4.png")
+                    img = Image.open("./images/4.png")
                     img = img.resize((20, 20), Image.ANTIALIAS)
                     img = ImageTk.PhotoImage(img)
                     mypanel = Label(game_frame, bg='#0A2F35', image=img)
@@ -713,21 +761,21 @@ class Gui:
                 self.piece_choosed[-1].btn_object.grid(row=6, column=4, padx=(10, 10), pady=(10, 10))
                 self.blue_win["bg"] = ['#0A2F35']
                 if len(self.piece_choosed[-1].winer_pieces) == 2:
-                    img = Image.open("2.png")
+                    img = Image.open("./images/2.png")
                     img = img.resize((20, 20), Image.ANTIALIAS)
                     img = ImageTk.PhotoImage(img)
                     mypanel = Label(game_frame, bg='#0A2F35', image=img)
                     mypanel.image = img
                     mypanel.grid(row=6, column=4, padx=(10, 10), pady=(10, 10))
                 elif len(self.piece_choosed[-1].winer_pieces) == 3:
-                    img = Image.open("3.png")
+                    img = Image.open("./images/3.png")
                     img = img.resize((20, 20), Image.ANTIALIAS)
                     img = ImageTk.PhotoImage(img)
                     mypanel = Label(game_frame, bg='#0A2F35', image=img)
                     mypanel.image = img
                     mypanel.grid(row=6, column=4, padx=(10, 10), pady=(10, 10))
                 elif len(self.piece_choosed[-1].winer_pieces) == 4:
-                    img = Image.open("4.png")
+                    img = Image.open("./images/4.png")
                     img = img.resize((20, 20), Image.ANTIALIAS)
                     img = ImageTk.PhotoImage(img)
                     mypanel = Label(game_frame, bg='#0A2F35', image=img)
@@ -737,21 +785,21 @@ class Gui:
                 self.piece_choosed[-1].btn_object.grid(row=2, column=4, padx=(10, 10), pady=(10, 10))
                 self.green_win["bg"] = ['#0A2F35']
                 if len(self.piece_choosed[-1].winer_pieces) == 2:
-                    img = Image.open("2.png")
+                    img = Image.open("./images/2.png")
                     img = img.resize((20, 20), Image.ANTIALIAS)
                     img = ImageTk.PhotoImage(img)
                     mypanel = Label(game_frame, bg='#0A2F35', image=img)
                     mypanel.image = img
                     mypanel.grid(row=2, column=4, padx=(10, 10), pady=(10, 10))
                 elif len(self.piece_choosed[-1].winer_pieces) == 3:
-                    img = Image.open("3.png")
+                    img = Image.open("./images/3.png")
                     img = img.resize((20, 20), Image.ANTIALIAS)
                     img = ImageTk.PhotoImage(img)
                     mypanel = Label(game_frame, bg='#0A2F35', image=img)
                     mypanel.image = img
                     mypanel.grid(row=2, column=4, padx=(10, 10), pady=(10, 10))
                 elif len(self.piece_choosed[-1].winer_pieces) == 4:
-                    img = Image.open("4.png")
+                    img = Image.open("./images/4.png")
                     img = img.resize((20, 20), Image.ANTIALIAS)
                     img = ImageTk.PhotoImage(img)
                     mypanel = Label(game_frame, bg='#0A2F35', image=img)
@@ -761,21 +809,21 @@ class Gui:
                 self.piece_choosed[-1].btn_object.grid(row=4, column=6, padx=(10, 10), pady=(10, 10))
                 self.yellow_win["bg"] = ['#0A2F35']
                 if len(self.piece_choosed[-1].winer_pieces) == 2:
-                    img = Image.open("2.png")
+                    img = Image.open("./images/2.png")
                     img = img.resize((20, 20), Image.ANTIALIAS)
                     img = ImageTk.PhotoImage(img)
                     mypanel = Label(game_frame, bg='#0A2F35', image=img)
                     mypanel.image = img
                     mypanel.grid(row=4, column=6, padx=(10, 10), pady=(10, 10))
                 elif len(self.piece_choosed[-1].winer_pieces) == 3:
-                    img = Image.open("3.png")
+                    img = Image.open("./images/3.png")
                     img = img.resize((20, 20), Image.ANTIALIAS)
                     img = ImageTk.PhotoImage(img)
                     mypanel = Label(game_frame, bg='#0A2F35', image=img)
                     mypanel.image = img
                     mypanel.grid(row=4, column=6, padx=(10, 10), pady=(10, 10))
                 elif len(self.piece_choosed[-1].winer_pieces) == 4:
-                    img = Image.open("4.png")
+                    img = Image.open("./images/4.png")
                     img = img.resize((20, 20), Image.ANTIALIAS)
                     img = ImageTk.PhotoImage(img)
                     mypanel = Label(game_frame, bg='#0A2F35', image=img)
@@ -799,7 +847,7 @@ class Gui:
                 ranking_page.title("RANKING")
                 ranking_page.geometry('400x250')
 
-                king = Image.open("king.png")
+                king = Image.open("./images/king.png")
                 king = king.resize((40, 40), Image.ANTIALIAS)
                 king = ImageTk.PhotoImage(king)
                 panel = Label(ranking_page, bg='#FFCA7A', image=king)
