@@ -387,7 +387,7 @@ class Gui:
 
     def login_clicked(self, username, password, mycolor, page_name, log_btn):
         check = True
-        # check = self.check_user_pass(username, password)
+        check = self.check_user_pass(username, password)
         if check == True:
             ID = 5 - len(self.enable_colors)
             if mycolor == 'red':
