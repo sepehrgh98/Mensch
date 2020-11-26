@@ -852,7 +852,7 @@ class Gui:
                 king = ImageTk.PhotoImage(king)
                 panel = Label(ranking_page, bg='#FFCA7A', image=king)
                 panel.image = king
-                panel.grid(row=0, column=1, padx=(40, 0), pady=(60, 10))
+                panel.grid(row=0, column=1, padx=(40, 0), pady=(10, 10))
 
                 myrank = []
                 for i in range(len(self.Game.Ranking)):
@@ -860,7 +860,7 @@ class Gui:
                                         text=f"{i + 1} - {self.Game.Ranking[i]}"))
 
                 for i in range(len(myrank)):
-                    myrank[i].grid(row=i, padx=(50, 0), pady=(60, 10), sticky="W")
+                    myrank[i].grid(row=i, padx=(50, 0), pady=(10, 10), sticky="W")
 
                 # log
                 rank = ""
