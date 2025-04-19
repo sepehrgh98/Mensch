@@ -37,7 +37,7 @@ class Gui:
         self.root.configure(background='#FFCA7A')
         self.root.geometry('1005x733')
         self.root.iconbitmap('E:/Maktab/Mench/images/logo.ico')
-        self.root.resizable(0,0)
+        self.root.resizable(0, 0)
         self.myroot = self.root
         self.make_items()
 
